@@ -1,8 +1,10 @@
 -----------------------------------
 
+_DISCLAIMER:_
+
 Welcome to **raylib game template**!
 
-This template provides a base structure to start developing a small raylib game in plain C. The repo is also pre-configured with a default `LICENSE` and a `README.md` (this one) to be filled with the required game information by users.
+This template provides a base structure to start developing a small raylib game in plain C. The repo is also pre-configured with a default `LICENSE` (zlib/libpng) and a `README.md` (this one) to be properly filled by users. Feel free to change the LICENSE as required.
 
 All the sections defined by `$(Data to Fill)` are expected to be edited and filled properly. It's recommended to delete this disclaimer message from the game repo using this template.
 
@@ -33,8 +35,16 @@ Keyboard:
  - $(Game Control 02)
  - $(Game Control 03)
 
+### Developers
+
+ - $(Developer 01) - $(Role/Tasks Developed)
+ - $(Developer 02) - $(Role/Tasks Developed)
+ - $(Developer 03) - $(Role/Tasks Developed)
+
 ### License
 
 This game sources are licensed under an unmodified zlib/libpng license, which is an OSI-certified, BSD-like license that allows static linking with closed source software. Check [LICENSE](LICENSE) for further details.
+
+$(Additional Licenses)
 
 *Copyright (c) $(Year) $(User Name) ($(User Twitter/GitHub Name))*
