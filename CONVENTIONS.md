@@ -1,7 +1,5 @@
 ## C Coding Style Conventions
 
-Here it is a list with some of the code conventions used by this game:
-
 Code element | Convention | Example
 --- | :---: | ---
 Defines | ALL_CAPS | `#define PLATFORM_DESKTOP`
@@ -24,11 +22,11 @@ Functions | TitleCase | `InitWindow()`, `LoadImageFromMemory()`
 Functions params | lowerCase | `width`, `height`
 Ternary Operator | (condition)? result1 : result2 | `printf("Value is 0: %s", (value == 0)? "yes" : "no");`
 
-Other conventions to follow:
- - **ALWAYS** initialize all defined variables.
- - **Do not use TABS**, use 4 spaces instead.
- - Avoid trailing spaces
- - Control flow statements always are followed **by a space**:
+Other conventions:
+ - All defined variables are ALWAYS initialized
+ - Four spaces are used, instead of TABS
+ - Trailing spaces are always avoided
+ - Control flow statements are followed **by a space**:
 ```c
 if (condition) value = 0;
 
@@ -39,7 +37,6 @@ while (!WindowShouldClose())
 
 for (int i = 0; i < NUM_VALUES; i++) printf("%i", i);
 
-// Be careful with the switch formatting!
 switch (value)
 {
     case 0:
@@ -50,14 +47,14 @@ switch (value)
     default: break;
 }
 ```
- - All conditions checks are **always between parenthesis** but not boolean values:
+ - All conditions are always between parenthesis, but not boolean values:
 ```c
 if ((value > 1) && (value < 50) && valueActive))
 {
 
 }
 ```
- - When dealing with braces or curly brackets, open-close them in aligned mode:
+ - Braces and curly brackets always open-close in aligned mode:
 ```c
 void SomeFunction()
 {
@@ -70,14 +67,13 @@ void SomeFunction()
   - Directories are named using `snake_case`: `resources/models`, `resources/fonts`
   - Files are named using `snake_case`: `main_title.png`, `cubicmap.png`, `sound.wav`
   
-_NOTE: Space and special character are avoided in the files/dir naming!_
+_NOTE: Spaces and special characters are always avoided in the files/dir naming!_
   
 ## Games/Examples Directories Organization Conventions
   
- - Resource files are organized by context and usage in the game, think about the loading requirements for data and put all the resources that need to be loaded at the same time together.
- - Descriptive names are used for the files, it would be perfect if just reading the name of the file, it was possible to know what is that file and where fits in the game.
- - Here it is an example of those conventions, note that some resources require to be loaded all at once while other require to be loaded only at initialization (gui, font).
-  
+ - Resource files are organized by context and usage in the game. Loading requirements for data are also considered (grouping data when required).
+ - Descriptive names are used for the files, just reading the name of the file it should be possible to know what is that file and where fits in the game.
+
 ```
 resources/audio/fx/long_jump.wav
 resources/audio/music/main_theme.ogg
@@ -89,4 +85,4 @@ resources/characters/enemy_slime.png
 resources/common/font_arial.ttf
 resources/common/gui.png
 ```
-
+_NOTE: Some resources require to be loaded all at once while other require to be loaded only at initialization (gui, font)._
