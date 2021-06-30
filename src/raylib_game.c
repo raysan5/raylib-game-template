@@ -56,13 +56,13 @@ static void UpdateDrawFrame(void);          // Update and draw one frame
 //----------------------------------------------------------------------------------
 int main(void)
 {
-    // Initialization (Note windowTitle is unused on Android)
+    // Initialization
     //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "raylib game template");
 
-    // Global data loading (assets that must be available in all screens, i.e. fonts)
-    InitAudioDevice();
+    InitAudioDevice();      // Initialize audio device
 
+    // Load global data (assets that must be available in all screens, i.e. font)
     font = LoadFont("resources/mecha.png");
     music = LoadMusicStream("resources/ambient.ogg");
     fxCoin = LoadSound("resources/coin.wav");
@@ -70,14 +70,14 @@ int main(void)
     SetMusicVolume(music, 1.0f);
     PlayMusicStream(music);
 
-    // Setup and Init first screen
+    // Setup and init first screen
     currentScreen = LOGO;
     InitLogoScreen();
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
 #else
-    SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -89,7 +89,6 @@ int main(void)
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-
     // Unload current screen data before closing
     switch (currentScreen)
     {
