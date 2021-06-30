@@ -35,6 +35,10 @@ Keyboard:
  - $(Game Control 02)
  - $(Game Control 03)
 
+### Screenshots
+
+_TODO: Show your game to the world, recommended to use animated GIFs._
+
 ### Developers
 
  - $(Developer 01) - $(Role/Tasks Developed)
