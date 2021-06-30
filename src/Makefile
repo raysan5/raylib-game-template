@@ -24,7 +24,7 @@
 .PHONY: all clean
 
 # Define required raylib variables
-PROJECT_NAME       ?= advance_game
+PROJECT_NAME       ?= raylib_game
 RAYLIB_VERSION     ?= 3.8.0
 RAYLIB_PATH        ?= ../..
 
@@ -370,7 +370,7 @@ endif
 
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
-    advance_game.c \
+    raylib_game.c \
     screen_logo.c \
     screen_title.c \
     screen_options.c \

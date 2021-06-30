@@ -1,6 +1,6 @@
 /*******************************************************************************************
 *
-*   raylib - Advance Game template
+*   raylib Game Template
 *
 *   <Game title>
 *   <Game description>
@@ -8,7 +8,7 @@
 *   This game has been created using raylib (www.raylib.com)
 *   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
 *
-*   Copyright (c) 2014-2021 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2021 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
 
@@ -58,7 +58,7 @@ int main(void)
 {
     // Initialization (Note windowTitle is unused on Android)
     //---------------------------------------------------------
-    InitWindow(screenWidth, screenHeight, "raylib template - advance game");
+    InitWindow(screenWidth, screenHeight, "raylib game template");
 
     // Global data loading (assets that must be available in all screens, i.e. fonts)
     InitAudioDevice();
