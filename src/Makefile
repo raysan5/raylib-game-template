@@ -23,10 +23,13 @@
 
 .PHONY: all clean
 
-# Define required raylib variables
+# Define required variables
 PROJECT_NAME       ?= raylib_game
 RAYLIB_VERSION     ?= 3.8.0
-RAYLIB_PATH        ?= ../..
+RAYLIB_PATH        ?= C:/GitHub/raylib
+
+OUTPUT_PATH        ?= ../build
+OUTPUT_TEMP_PATH   ?= ../temp
 
 # Define default options
 
