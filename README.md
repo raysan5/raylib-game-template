@@ -6,9 +6,9 @@ Welcome to **raylib game template**!
 
 This template provides a base structure to start developing a small raylib game in plain C. The repo is also pre-configured with a default `LICENSE` (zlib/libpng) and a `README.md` (this one) to be properly filled by users. Feel free to change the LICENSE as required.
 
-All the sections defined by `$(Data to Fill)` are expected to be edited and filled properly. It's recommended to delete this disclaimer message from the game repo using this template.
+All the sections defined by `$(Data to Fill)` are expected to be edited and filled properly. It's recommended to delete this disclaimer message after editing this `README.md` file.
 
-This example has been created to be used with raylib (www.raylib.com) and it's licensed under an unmodified zlib/libpng license.
+This template has been created to be used with raylib (www.raylib.com) and it's licensed under an unmodified zlib/libpng license.
 
 _Copyright (c) 2014-2021 Ramon Santamaria ([@raysan5](https://twitter.com/raysan5))_
 
@@ -37,13 +37,19 @@ Keyboard:
 
 ### Screenshots
 
-_TODO: Show your game to the world, recommended to use animated GIFs._
+_TODO: Show your game to the world, animated GIFs recommended!._
 
 ### Developers
 
  - $(Developer 01) - $(Role/Tasks Developed)
  - $(Developer 02) - $(Role/Tasks Developed)
  - $(Developer 03) - $(Role/Tasks Developed)
+
+### Links
+
+ - YouTube Gameplay: $(YouTube Link)
+ - itch.io Release: $(itch.io Game Page)
+ - Steam Release: $(Steam Game Page)
 
 ### License
 
