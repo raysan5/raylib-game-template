@@ -155,8 +155,8 @@ all: create_temp_project_dirs \
      compile_project_class \
      compile_project_class_dex \
      create_project_apk_package \
-     zipalign_project_apk_package \
-     sign_project_apk_package
+     sign_project_apk_package \
+     zipalign_project_apk_package
 
 # Create required temp directories for APK building
 create_temp_project_dirs:
