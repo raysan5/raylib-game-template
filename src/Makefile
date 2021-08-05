@@ -25,7 +25,7 @@
 
 # Define required variables
 PROJECT_NAME       ?= raylib_game
-RAYLIB_VERSION     ?= 3.8.0
+RAYLIB_VERSION     ?= 3.7.0
 RAYLIB_PATH        ?= C:/GitHub/raylib
 
 # Define default options
