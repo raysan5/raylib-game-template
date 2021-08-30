@@ -49,7 +49,7 @@ switch (value)
 ```
  - All conditions are always between parenthesis, but not boolean values:
 ```c
-if ((value > 1) && (value < 50) && valueActive))
+if ((value > 1) && (value < 50) && valueActive)
 {
 
 }
@@ -63,14 +63,14 @@ void SomeFunction()
 ```
 
 ## Files and Directories Naming Conventions
- 
+
   - Directories are named using `snake_case`: `resources/models`, `resources/fonts`
   - Files are named using `snake_case`: `main_title.png`, `cubicmap.png`, `sound.wav`
-  
+
 _NOTE: Spaces and special characters are always avoided in the files/dir naming!_
-  
+
 ## Games/Examples Directories Organization Conventions
-  
+
  - Resource files are organized by context and usage in the game. Loading requirements for data are also considered (grouping data when required).
  - Descriptive names are used for the files, just reading the name of the file it should be possible to know what is that file and where fits in the game.
 
