@@ -17,7 +17,8 @@ Operators | value1 - value2 | `int res = value - 5;`
 Enum | TitleCase | `enum TextureFormat`
 Enum members | ALL_CAPS | `PIXELFORMAT_UNCOMPRESSED_R8G8B8`
 Struct | TitleCase | `struct Texture2D`, `struct Material`
-Struct members |lowerCase | `texture.width`, `color.r`
+Struct typedef | TitleCase | `typedef struct Texture { ... } Texture;`
+Struct members | lowerCase | `texture.width`, `color.r`
 Functions | TitleCase | `InitWindow()`, `LoadImageFromMemory()`
 Functions params | lowerCase | `width`, `height`
 Ternary Operator | (condition)? result1 : result2 | `printf("Value is 0: %s", (value == 0)? "yes" : "no");`
