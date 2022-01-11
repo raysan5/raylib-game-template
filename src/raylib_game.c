@@ -1,6 +1,6 @@
 /*******************************************************************************************
 *
-*   raylib Game Template
+*   raylib game template
 *
 *   <Game title>
 *   <Game description>
@@ -21,6 +21,7 @@
 
 //----------------------------------------------------------------------------------
 // Shared Variables Definition (global)
+// NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
 GameScreen currentScreen = 0;
 Font font = { 0 };
@@ -28,7 +29,7 @@ Music music = { 0 };
 Sound fxCoin = { 0 };
 
 //----------------------------------------------------------------------------------
-// Global Variables Definition (local to this module)
+// Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
 static const int screenWidth = 800;
 static const int screenHeight = 450;
@@ -99,7 +100,7 @@ int main(void)
         default: break;
     }
 
-    // Unload all global loaded data (i.e. fonts) here!
+    // Unload global data loaded
     UnloadFont(font);
     UnloadMusicStream(music);
     UnloadSound(fxCoin);
@@ -115,7 +116,6 @@ int main(void)
 //----------------------------------------------------------------------------------
 // Module specific Functions Definition
 //----------------------------------------------------------------------------------
-
 // Change to next screen, no transition
 static void ChangeToScreen(int screen)
 {
@@ -152,7 +152,7 @@ static void TransitionToScreen(int screen)
     transAlpha = 0.0f;
 }
 
-// Update transition effect
+// Update transition effect (fade-in, fade-out)
 static void UpdateTransition(void)
 {
     if (!transFadeOut)
