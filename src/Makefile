@@ -26,17 +26,19 @@
 # Define required environment variables
 #------------------------------------------------------------------------------------------------
 # Define target platform: PLATFORM_DESKTOP, PLATFORM_RPI, PLATFORM_DRM, PLATFORM_ANDROID, PLATFORM_WEB
-PLATFORM           ?= PLATFORM_DESKTOP
+PLATFORM              ?= PLATFORM_DESKTOP
 
-# Define required raylib variables
-PROJECT_NAME       ?= raylib_game
-RAYLIB_VERSION     ?= 4.0.0
-RAYLIB_PATH        ?= C:/GitHub/raylib
+# Define project variables
+PROJECT_NAME          ?= raylib_game
+PROJECT_VERSION       ?= 1.0
+PROJECT_BUILD_PATH    ?= .
+
+RAYLIB_PATH           ?= C:/GitHub/raylib
 
 # Locations of raylib.h and libraylib.a/libraylib.so
 # NOTE: Those variables are only used for PLATFORM_OS: LINUX, BSD
 RAYLIB_INCLUDE_PATH   ?= /usr/local/include
-RAYLIB_LIBRARY_PATH   ?= /usr/local/lib
+RAYLIB_LIB_PATH       ?= /usr/local/lib
 
 # Library type compilation: STATIC (.a) or SHARED (.so/.dll)
 RAYLIB_LIBTYPE        ?= STATIC
@@ -44,12 +46,16 @@ RAYLIB_LIBTYPE        ?= STATIC
 # Build mode for project: DEBUG or RELEASE
 BUILD_MODE            ?= RELEASE
 
-# Use external GLFW library instead of rglfw module
-USE_EXTERNAL_GLFW     ?= FALSE
-
 # Use Wayland display server protocol on Linux desktop (by default it uses X11 windowing system)
 # NOTE: This variable is only used for PLATFORM_OS: LINUX
 USE_WAYLAND_DISPLAY   ?= FALSE
+
+# PLATFORM_WEB: Default properties
+BUILD_WEB_ASYNCIFY    ?= FALSE
+BUILD_WEB_SHELL       ?= minshell.html
+BUILD_WEB_HEAP_SIZE   ?= 134217728
+BUILD_WEB_RESOURCES   ?= FALSE
+BUILD_WEB_RESOURCES_PATH  ?= resources
 
 # Use cross-compiler for PLATFORM_RPI
 ifeq ($(PLATFORM),PLATFORM_RPI)
@@ -183,18 +189,19 @@ endif
 #  -Wno-missing-braces  ignore invalid warning (GCC bug 53119)
 #  -Wno-unused-value    ignore unused return values of some functions (i.e. fread())
 #  -D_DEFAULT_SOURCE    use with -std=c99 on Linux and PLATFORM_WEB, required for timespec
-CFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result
+CFLAGS = -std=c99 -Wall -Wno-missing-braces -Wunused-result -D_DEFAULT_SOURCE
 
 ifeq ($(BUILD_MODE),DEBUG)
     CFLAGS += -g -D_DEBUG
-    ifeq ($(PLATFORM),PLATFORM_WEB)
-        CFLAGS += -s ASSERTIONS=1 --profiling
-    endif
 else
     ifeq ($(PLATFORM),PLATFORM_WEB)
-        CFLAGS += -Os
+        ifeq ($(BUILD_WEB_ASYNCIFY),TRUE)
+            CFLAGS += -O3
+        else
+            CFLAGS += -Os
+        endif
     else
-        CFLAGS += -s -O1
+        CFLAGS += -s -O2
     endif
 endif
 
@@ -255,10 +262,10 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
         endif
     endif
     ifeq ($(PLATFORM_OS),LINUX)
-        LDFLAGS += -L$(RAYLIB_LIBRARY_PATH)
+        LDFLAGS += -L$(RAYLIB_LIB_PATH)
     endif
     ifeq ($(PLATFORM_OS),BSD)
-        LDFLAGS += -Lsrc -L$(RAYLIB_LIBRARY_PATH)
+        LDFLAGS += -Lsrc -L$(RAYLIB_LIB_PATH)
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
@@ -276,15 +283,25 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # --memory-init-file 0       # to avoid an external memory initialization code file (.mem)
     # --preload-file resources   # specify a resources folder for data compilation
     # --source-map-base          # allow debugging in browser with source map
-    LDFLAGS += -s USE_GLFW=3 -s ASYNCIFY -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --preload-file $(dir $<)resources@resources
-
-    # NOTE: Simple raylib examples are compiled to be interpreter with asyncify, that way,
-    # we can compile same code for ALL platforms with no change required, but, working on bigger
-    # projects, code needs to be refactored to avoid a blocking while() loop, moving Update and Draw
-    # logic to a self contained function: UpdateDrawFrame(), check core_basic_window_web.c for reference.
+    LDFLAGS += -s USE_GLFW=3 -s TOTAL_MEMORY=$(BUILD_WEB_HEAP_SIZE) -s FORCE_FILESYSTEM=1
+    
+    # Build using asyncify
+    ifeq ($(BUILD_WEB_ASYNCIFY),TRUE)
+        LDFLAGS += -s ASYNCIFY
+    endif
+    
+    # Add resources building if required
+    ifeq ($(BUILD_WEB_RESOURCES),TRUE)
+        LDFLAGS += --preload-file $(BUILD_WEB_RESOURCES_PATH)
+    endif
+    
+    # Add debug mode flags if required
+    ifeq ($(BUILD_MODE),DEBUG)
+        LDFLAGS += -s ASSERTIONS=1 --profiling
+    endif
 
     # Define a custom shell .html and output extension
-    LDFLAGS += --shell-file $(RAYLIB_PATH)/src/shell.html
+    LDFLAGS += --shell-file $(BUILD_WEB_SHELL)
     EXT = .html
 endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
@@ -333,10 +350,6 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 
         # On XWindow requires also below libraries
         LDLIBS += -lX11 -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor
-    endif
-    ifeq ($(USE_EXTERNAL_GLFW),TRUE)
-        # NOTE: It could require additional packages installed: libglfw3-dev
-        LDLIBS += -lglfw
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
