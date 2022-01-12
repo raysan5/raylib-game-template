@@ -35,6 +35,10 @@ PROJECT_BUILD_PATH    ?= .
 
 RAYLIB_PATH           ?= ../../raylib
 
+ifeq ($(PLATFORM),PLATFORM_WEB)
+	RAYLIB_PATH = ../../raylib-web/raylib
+endif
+
 # Locations of raylib.h and libraylib.a/libraylib.so
 # NOTE: Those variables are only used for PLATFORM_OS: LINUX, BSD
 RAYLIB_INCLUDE_PATH   ?= /usr/local/include
@@ -129,12 +133,12 @@ RAYLIB_RELEASE_PATH 	?= $(RAYLIB_PATH)/src
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    EMSDK_PATH         ?= C:/emsdk
+    EMSDK_PATH         ?= ../emsdk
     EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
     CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
-    PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-1_64bit
-    NODE_PATH           = $(EMSDK_PATH)/node/14.15.5_64bit/bin
-    export PATH         = $(EMSDK_PATH);$(EMSCRIPTEN_PATH);$(CLANG_PATH);$(NODE_PATH);$(PYTHON_PATH):$$(PATH)
+    PYTHON_PATH         = /usr/lib/python3.9
+    NODE_PATH           = $(EMSDK_PATH)/node/14.18.2_64bit/bin
+    export PATH         = $(shell printenv PATH):$(EMSDK_PATH):$(EMSCRIPTEN_PATH):$(CLANG_PATH):$(NODE_PATH):$(PYTHON_PATH)
 endif
 
 # Define default C compiler: CC
