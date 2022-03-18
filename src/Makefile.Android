@@ -21,6 +21,8 @@
 #
 #**************************************************************************************************
 
+SHELL=cmd
+
 # Define required raylib variables
 PLATFORM               ?= PLATFORM_ANDROID
 RAYLIB_PATH            ?= C:\GitHub\raylib
