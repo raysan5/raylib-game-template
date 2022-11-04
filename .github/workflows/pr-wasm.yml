@@ -1,0 +1,15 @@
+name: PR Wasm Test
+on:
+  pull_requests: 
+    branches: ["main"]
+env:
+  PLATFORM: PLATFORM_WEB
+jobs:
+  build:
+    name: Build WASM For Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+      - name: Run Makefile
+        run: make

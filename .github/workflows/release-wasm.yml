@@ -1,0 +1,11 @@
+name: Release WASM Build
+on:
+  release:
+    types: [released]
+jobs:
+  build:
+    name: Build WASM Version of release
+    runs-on: ubuntu-latest
+    steps:
+      - name: placeholder
+        run: echo "Placeholder"
