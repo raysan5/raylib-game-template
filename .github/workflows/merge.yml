@@ -1,0 +1,52 @@
+name: Build and Publish WASM
+on:
+  push: 
+    branches: ["main"]
+env:
+  PLATFORM: PLATFORM_WEB
+  MAKE: /usr/bin/make
+  PYTHON_PATH: /usr/bin
+jobs:
+  make-gh-pages:
+    name: Create gh-pages branch if necessary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create gh-pages branch
+        uses: peterjgrainger/action-create-branch@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: 'gh-pages'
+  build:
+    name: Build WASM For Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y make build-essential libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev python3
+      - name: Checkout raylib
+        uses: actions/checkout@v3
+        with:
+          path: raylib
+          repository: raysan5/raylib
+      - name: Checkout raylib-game-template
+        uses: actions/checkout@v3
+        with:
+          path: raylib-game-template
+      - name: Checkout emsdk
+        uses: actions/checkout@v3
+        with:
+          repository: emscripten-core/emsdk
+          path: emsdk
+      - name: Install & Activate emsdk
+        run: $GITHUB_WORKSPACE/raylib-game-template/github-scripts/setup-emsdk.sh
+      - name: Compile raylib for WASM
+        run: $GITHUB_WORKSPACE/raylib-game-template/github-scripts/compile-raylib.sh
+      - name: Compile raylib-game-template for WASM
+        run: $GITHUB_WORKSPACE/raylib-game-template/github-scripts/compile-raylib-game-template.sh
+      - name: Deploy Static Site
+        uses: moodiest/push-to-branch-action@develop
+        env:
+          REPO: self
+          BRANCH: gh-pages
+          FOLDER: raylib-game-template/site
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
