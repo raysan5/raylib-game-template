@@ -23,7 +23,7 @@
 // Shared Variables Definition (global)
 // NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
-GameScreen currentScreen = 0;
+GameScreen currentScreen = LOGO;
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
@@ -39,7 +39,7 @@ static float transAlpha = 0.0f;
 static bool onTransition = false;
 static bool transFadeOut = false;
 static int transFromScreen = -1;
-static int transToScreen = -1;
+static GameScreen transToScreen = UNKNOWN;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -117,7 +117,7 @@ int main(void)
 // Module specific Functions Definition
 //----------------------------------------------------------------------------------
 // Change to next screen, no transition
-static void ChangeToScreen(int screen)
+static void ChangeToScreen(GameScreen screen)
 {
     // Unload current screen
     switch (currentScreen)
@@ -143,7 +143,7 @@ static void ChangeToScreen(int screen)
 }
 
 // Request transition to next screen
-static void TransitionToScreen(int screen)
+static void TransitionToScreen(GameScreen screen)
 {
     onTransition = true;
     transFadeOut = false;
@@ -202,7 +202,7 @@ static void UpdateTransition(void)
             transFadeOut = false;
             onTransition = false;
             transFromScreen = -1;
-            transToScreen = -1;
+            transToScreen = UNKNOWN;
         }
     }
 }
