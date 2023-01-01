@@ -10,7 +10,7 @@ All the sections defined by `$(Data to Fill)` are expected to be edited and fill
 
 This template has been created to be used with raylib (www.raylib.com) and it's licensed under an unmodified zlib/libpng license.
 
-_Copyright (c) 2014-2022 Ramon Santamaria ([@raysan5](https://twitter.com/raysan5))_
+_Copyright (c) 2014-2023 Ramon Santamaria ([@raysan5](https://twitter.com/raysan5))_
 
 -----------------------------------
 
