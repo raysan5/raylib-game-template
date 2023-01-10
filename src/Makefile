@@ -432,8 +432,5 @@ ifeq ($(PLATFORM),PLATFORM_DRM)
 	find . -type f -executable -delete
 	rm -fv *.o
 endif
-ifeq ($(PLATFORM),PLATFORM_WEB)
-	del *.o *.html *.js
-endif
 	@echo Cleaning done
 
