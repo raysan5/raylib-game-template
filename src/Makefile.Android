@@ -62,7 +62,6 @@ PROJECT_BUILD_ID       ?= android
 PROJECT_BUILD_PATH     ?= $(PROJECT_BUILD_ID).$(PROJECT_NAME)
 PROJECT_RESOURCES_PATH ?= resources
 PROJECT_SOURCE_FILES   ?= simple_game.c
-NATIVE_APP_GLUE_PATH    = $(ANDROID_NDK)/sources/android/native_app_glue
 
 # Some source files are placed in directories, when compiling to some 
 # output directory other than source, that directory must pre-exist.
@@ -127,7 +126,7 @@ CFLAGS += -Wall -Wa,--noexecstack -Wformat -Werror=format-security -no-canonical
 CFLAGS += -DANDROID -DPLATFORM_ANDROID -D__ANDROID_API__=$(ANDROID_API_VERSION)
 
 # Paths containing required header files
-INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/src -I$(NATIVE_APP_GLUE_PATH)
+INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/src
 
 # Linker options
 LDFLAGS = -Wl,-soname,lib$(PROJECT_LIBRARY_NAME).so -Wl,--exclude-libs,libatomic.a 
@@ -253,11 +252,6 @@ generate_apk_keystore:
 # NOTE: Generates resources file: src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/R.java
 config_project_package:
 	$(ANDROID_BUILD_TOOLS)/aapt package -f -m -S $(PROJECT_BUILD_PATH)/res -J $(PROJECT_BUILD_PATH)/src -M $(PROJECT_BUILD_PATH)/AndroidManifest.xml -I $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar
-
-# Compile native_app_glue code as static library: obj/libnative_app_glue.a
-compile_native_app_glue:
-	$(CC) -c $(NATIVE_APP_GLUE_PATH)/android_native_app_glue.c -o $(PROJECT_BUILD_PATH)/obj/native_app_glue.o $(CFLAGS)
-	$(AR) rcs $(PROJECT_BUILD_PATH)/obj/libnative_app_glue.a $(PROJECT_BUILD_PATH)/obj/native_app_glue.o
 
 # Compile project code into a shared library: lib/lib$(PROJECT_LIBRARY_NAME).so 
 compile_project_code: $(OBJS)
