@@ -14,7 +14,12 @@ _Copyright (c) 2014-2023 Ramon Santamaria ([@raysan5](https://twitter.com/raysan
 
 -----------------------------------
 ## Getting Started with this template
-- After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.
+- After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.  So your file structure should look like this:
+    - Some parent directory
+        - `raylib`
+            - the contents of https://github.com/raysan5/raylib
+        - `raylib-game-template`
+            - this `README.md` and all other raylib-game-template files
 - If using Visual Studio, open projects/VS2022/raylib-game-template.sln
 - Select on `raylib_game` in the solution explorer, then in the toolbar at the top, click `Project` > `Set as Startup Project`
 - Now you're all set up!  Click `Local Windows Debugger` with the green play arrow and the project will run.
