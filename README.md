@@ -13,6 +13,11 @@ This template has been created to be used with raylib (www.raylib.com) and it's 
 _Copyright (c) 2014-2023 Ramon Santamaria ([@raysan5](https://twitter.com/raysan5))_
 
 -----------------------------------
+## Getting Started with this template
+- After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.
+- If using Visual Studio, open projects/VS2022/raylib-game-template.sln
+- Select on `raylib_game` in the solution explorer, then in the toolbar at the top, click `Project` > `Set as Startup Project`
+- Now you're all set up!  Click `Local Windows Debugger` with the green play arrow and the project will run.
 
 ## $(Game Title)
 
