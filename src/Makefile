@@ -72,6 +72,9 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     # ifeq ($(UNAME),Msys) -> Windows
     ifeq ($(OS),Windows_NT)
         PLATFORM_OS = WINDOWS
+        ifndef PLATFORM_SHELL
+            PLATFORM_SHELL = cmd
+        endif
     else
         UNAMEOS = $(shell uname)
         ifeq ($(UNAMEOS),Linux)
@@ -92,6 +95,9 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
         ifeq ($(UNAMEOS),Darwin)
             PLATFORM_OS = OSX
         endif
+        ifndef PLATFORM_SHELL
+            PLATFORM_SHELL = sh
+        endif
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
@@ -99,11 +105,33 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
     ifeq ($(UNAMEOS),Linux)
         PLATFORM_OS = LINUX
     endif
+    ifndef PLATFORM_SHELL
+        PLATFORM_SHELL = sh
+    endif
 endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
     UNAMEOS = $(shell uname)
     ifeq ($(UNAMEOS),Linux)
         PLATFORM_OS = LINUX
+    endif
+    ifndef PLATFORM_SHELL
+        PLATFORM_SHELL = sh
+    endif
+endif
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    ifeq ($(OS),Windows_NT)
+        PLATFORM_OS = WINDOWS
+        ifndef PLATFORM_SHELL
+            PLATFORM_SHELL = cmd
+        endif
+    else
+        UNAMEOS = $(shell uname)
+        ifeq ($(UNAMEOS),Linux)
+            PLATFORM_OS = LINUX
+        endif
+        ifndef PLATFORM_SHELL
+            PLATFORM_SHELL = sh
+        endif
     endif
 endif
 
@@ -411,12 +439,14 @@ $(PROJECT_NAME): $(OBJS)
 %.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
+.PHONY: clean_shell_cmd clean_shell_sh
+
 # Clean everything
-clean:
+clean:	clean_shell_$(PLATFORM_SHELL)
+	@echo "removed all generated files!"
+
+clean_shell_sh:
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
-    ifeq ($(PLATFORM_OS),WINDOWS)
-		del *.o *.exe /s
-    endif
     ifeq ($(PLATFORM_OS),LINUX)
 		find . -type f -executable -delete
 		rm -fv *.o
@@ -436,3 +466,7 @@ ifeq ($(PLATFORM),PLATFORM_DRM)
 endif
 	@echo Cleaning done
 
+# Set specific target variable
+clean_shell_cmd: SHELL=cmd
+clean_shell_cmd:
+	del *.o *.exe /s

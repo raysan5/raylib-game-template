@@ -59,5 +59,9 @@ dkms.conf
 *.user
 .vs
 
+# Clangd LSP
+.cache
+compile_commands.json
+
 # Build folder
 [Bb]uild
