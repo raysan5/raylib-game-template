@@ -443,7 +443,7 @@ $(PROJECT_NAME): $(OBJS)
 
 # Clean everything
 clean:	clean_shell_$(PLATFORM_SHELL)
-	@echo "removed all generated files!"
+	@echo Cleaning done
 
 clean_shell_sh:
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
@@ -464,7 +464,6 @@ ifeq ($(PLATFORM),PLATFORM_DRM)
 	find . -type f -executable -delete
 	rm -fv *.o
 endif
-	@echo Cleaning done
 
 # Set specific target variable
 clean_shell_cmd: SHELL=cmd
