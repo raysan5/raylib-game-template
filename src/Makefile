@@ -21,7 +21,7 @@
 #
 #**************************************************************************************************
 
-.PHONY: all clean
+.PHONY: all clean run
 
 # Define required environment variables
 #------------------------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ ifeq ($(OS),Windows_NT)
         EMSDK_PATH         ?= C:/emsdk
         EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
         CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
-        PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-1_64bit
+        PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-nuget_64bit
         NODE_PATH           = $(EMSDK_PATH)/node/14.15.5_64bit/bin
         export PATH         = $(EMSDK_PATH);$(EMSCRIPTEN_PATH);$(CLANG_PATH);$(NODE_PATH);$(PYTHON_PATH):$$(PATH)
     endif
@@ -276,6 +276,9 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
 endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
     INCLUDE_PATHS += -I/usr/include/libdrm
+endif
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    INCLUDE_PATHS += -I$(EMSCRIPTEN_PATH)/cache/sysroot/include
 endif
 
 # Define library paths containing required libs: LDFLAGS
@@ -439,6 +442,21 @@ $(PROJECT_NAME): $(OBJS)
 %.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
+run:
+	$(MAKE) $(MAKEFILE_PARAMS)
+
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+    ifeq ($(PLATFORM_OS),WINDOWS)
+		$(PROJECT_NAME)
+    endif
+    ifeq ($(PLATFORM_OS),LINUX)
+		./$(PROJECT_NAME)
+    endif
+    ifeq ($(PLATFORM_OS),OSX)
+		./$(PROJECT_NAME)
+    endif
+endif
+
 .PHONY: clean_shell_cmd clean_shell_sh
 
 # Clean everything
@@ -468,4 +486,4 @@ endif
 # Set specific target variable
 clean_shell_cmd: SHELL=cmd
 clean_shell_cmd:
-	del *.o *.exe /s
+	del *.o *.exe $(PROJECT_NAME).data $(PROJECT_NAME).html $(PROJECT_NAME).js $(PROJECT_NAME).wasm /s
