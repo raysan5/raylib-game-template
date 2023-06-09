@@ -192,7 +192,7 @@ MAKE ?= make
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
-        MAKE = mingw32-make
+        MAKE = taskkill /im $(PROJECT_NAME).exe > nul 2>&1 & mingw32-make
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
