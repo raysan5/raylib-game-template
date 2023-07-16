@@ -40,7 +40,7 @@ ifeq ($(ANDROID_ARCH),ARM64)
     ANDROID_ARCH_NAME   = arm64-v8a
 endif
 ifeq ($(ANDROID_ARCH),x86)
-    ANDROID_ARCH_NAME   = i686
+    ANDROID_ARCH_NAME   = x86
 endif
 ifeq ($(ANDROID_ARCH),x86_64)
     ANDROID_ARCH_NAME   = x86_64
@@ -116,14 +116,14 @@ ifeq ($(ANDROID_ARCH),ARM)
     CFLAGS = -std=c99 -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
 ifeq ($(ANDROID_ARCH),ARM64)
-    CFLAGS = -std=c99 -target aarch64 -mfix-cortex-a53-835769
+    CFLAGS = -std=c99 -march=armv8-a -mfix-cortex-a53-835769
 endif
 # Compilation functions attributes options
 CFLAGS += -ffunction-sections -funwind-tables -fstack-protector-strong -fPIC
 # Compiler options for the linker
 CFLAGS += -Wall -Wa,--noexecstack -Wformat -Werror=format-security -no-canonical-prefixes
 # Preprocessor macro definitions
-CFLAGS += -DANDROID -DPLATFORM_ANDROID -D__ANDROID_API__=$(ANDROID_API_VERSION)
+CFLAGS += -D__ANDROID__ -DPLATFORM_ANDROID -D__ANDROID_API__=$(ANDROID_API_VERSION)
 
 # Paths containing required header files
 INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/src
@@ -134,7 +134,7 @@ LDFLAGS += -Wl,--build-id -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl
 # Force linking of library module to define symbol
 LDFLAGS += -u ANativeActivity_onCreate
 # Library paths containing required libs
-LDFLAGS += -L. -L$(PROJECT_BUILD_PATH)/obj -L$(PROJECT_BUILD_PATH)/lib/$(ANDROID_ARCH_NAME) -L$(ANDROID_TOOLCHAIN)\sysroot\usr\lib
+LDFLAGS += -L. -L$(PROJECT_BUILD_PATH)/obj -L$(PROJECT_BUILD_PATH)/lib/$(ANDROID_ARCH_NAME)
 
 # Define any libraries to link into executable
 # if you want to link libraries (libname.so or libname.a), use the -lname
@@ -156,8 +156,8 @@ all: create_temp_project_dirs \
      compile_project_class \
      compile_project_class_dex \
      create_project_apk_package \
-     sign_project_apk_package \
-     zipalign_project_apk_package
+     zipalign_project_apk_package \
+     sign_project_apk_package
 
 # Create required temp directories for APK building
 create_temp_project_dirs:
@@ -233,7 +233,8 @@ generate_android_manifest:
 	@echo             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
 	@echo             android:configChanges="orientation|keyboardHidden|screenSize" >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
 	@echo             android:screenOrientation="$(APP_SCREEN_ORIENTATION)" android:launchMode="singleTask" >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
-	@echo             android:clearTaskOnLaunch="true"^> >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
+	@echo             android:clearTaskOnLaunch="true" >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
+	@echo             android:exported="true"^> >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
 	@echo             ^<meta-data android:name="android.app.lib_name" android:value="$(PROJECT_LIBRARY_NAME)" /^> >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
 	@echo             ^<intent-filter^> >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
 	@echo                 ^<action android:name="android.intent.action.MAIN" /^> >> $(PROJECT_BUILD_PATH)/AndroidManifest.xml
@@ -264,27 +265,27 @@ $(PROJECT_BUILD_PATH)/obj/%.o:%.c
     
 # Compile project .java code into .class (Java bytecode) 
 compile_project_class:
-	$(JAVA_HOME)/bin/javac -verbose -source 1.7 -target 1.7 -d $(PROJECT_BUILD_PATH)/obj -bootclasspath $(JAVA_HOME)/jre/lib/rt.jar -classpath $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar;$(PROJECT_BUILD_PATH)/obj -sourcepath $(PROJECT_BUILD_PATH)/src $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/R.java $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/NativeLoader.java
+	$(JAVA_HOME)/bin/javac -verbose --source 11 --target 11 -d $(PROJECT_BUILD_PATH)/obj --system $(JAVA_HOME) --class-path $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar;$(PROJECT_BUILD_PATH)/obj --source-path $(PROJECT_BUILD_PATH)/src $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/R.java $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/NativeLoader.java
 
 # Compile .class files into Dalvik executable bytecode (.dex)
 # NOTE: Since Android 5.0, Dalvik interpreter (JIT) has been replaced by ART (AOT)
 compile_project_class_dex:
-	$(ANDROID_BUILD_TOOLS)/dx --verbose --dex --output=$(PROJECT_BUILD_PATH)/bin/classes.dex $(PROJECT_BUILD_PATH)/obj
+	$(ANDROID_BUILD_TOOLS)/d8 $(PROJECT_BUILD_PATH)/obj/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/*.class --release --output $(PROJECT_BUILD_PATH)/bin --lib $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar
 
-# Create Android APK package: bin/$(PROJECT_NAME).unsigned.apk
+# Create Android APK package: bin/$(PROJECT_NAME).unaligned.apk
 # NOTE: Requires compiled classes.dex and lib$(PROJECT_LIBRARY_NAME).so
 # NOTE: Use -A resources to define additional directory in which to find raw asset files
 create_project_apk_package:
 	$(ANDROID_BUILD_TOOLS)/aapt package -f -M $(PROJECT_BUILD_PATH)/AndroidManifest.xml -S $(PROJECT_BUILD_PATH)/res -A $(PROJECT_BUILD_PATH)/assets -I $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar -F $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unsigned.apk $(PROJECT_BUILD_PATH)/bin
-	cd $(PROJECT_BUILD_PATH) && $(ANDROID_BUILD_TOOLS)/aapt add bin/$(PROJECT_NAME).unsigned.apk lib/$(ANDROID_ARCH_NAME)/lib$(PROJECT_LIBRARY_NAME).so $(PROJECT_SHARED_LIBS)
+	cd $(PROJECT_BUILD_PATH) && $(ANDROID_BUILD_TOOLS)/aapt add bin/$(PROJECT_NAME).unaligned.apk lib/$(ANDROID_ARCH_NAME)/lib$(PROJECT_LIBRARY_NAME).so $(PROJECT_SHARED_LIBS)
 
-# Create signed APK package using generated Key: bin/$(PROJECT_NAME).signed.apk 
-sign_project_apk_package:
-	$(JAVA_HOME)/bin/jarsigner -keystore $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore -storepass $(APP_KEYSTORE_PASS) -keypass $(APP_KEYSTORE_PASS) -signedjar $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).signed.apk $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unsigned.apk $(PROJECT_NAME)Key
-
-# Create zip-aligned APK package: $(PROJECT_NAME).apk 
+# Create zip-aligned APK package: bin/$(PROJECT_NAME).aligned.apk 
 zipalign_project_apk_package:
-	$(ANDROID_BUILD_TOOLS)/zipalign -f 4 $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).signed.apk $(PROJECT_NAME).apk
+	$(ANDROID_BUILD_TOOLS)/zipalign -p -f 4 $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unaligned.apk $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).aligned.apk
+
+# Create signed APK package using generated Key: $(PROJECT_NAME).apk 
+sign_project_apk_package:
+	$(ANDROID_BUILD_TOOLS)/apksigner sign --ks $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore --ks-pass pass:$(APP_KEYSTORE_PASS) --key-pass pass:$(APP_KEYSTORE_PASS) --out $(PROJECT_NAME).apk --ks-key-alias $(PROJECT_NAME)Key $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).aligned.apk
 
 # Install $(PROJECT_NAME).apk to default emulator/device
 # NOTE: Use -e (emulator) or -d (device) parameters if required
