@@ -40,7 +40,7 @@ ifeq ($(ANDROID_ARCH),ARM64)
     ANDROID_ARCH_NAME   = arm64-v8a
 endif
 ifeq ($(ANDROID_ARCH),x86)
-    ANDROID_ARCH_NAME   = x86
+    ANDROID_ARCH_NAME   = i686
 endif
 ifeq ($(ANDROID_ARCH),x86_64)
     ANDROID_ARCH_NAME   = x86_64
@@ -267,7 +267,7 @@ compile_project_class:
 # Compile .class files into Dalvik executable bytecode (.dex)
 # NOTE: Since Android 5.0, Dalvik interpreter (JIT) has been replaced by ART (AOT)
 compile_project_class_dex:
-	$(ANDROID_BUILD_TOOLS)/d8 $(PROJECT_BUILD_PATH)/obj/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/*.class --release --output $(PROJECT_BUILD_PATH)/bin
+	$(ANDROID_BUILD_TOOLS)/d8 $(PROJECT_BUILD_PATH)/obj/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/*.class --release --output $(PROJECT_BUILD_PATH)/bin --lib $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar
 
 # Create Android APK package: bin/$(PROJECT_NAME).unsigned.apk
 # NOTE: Requires compiled classes.dex and lib$(PROJECT_LIBRARY_NAME).so
