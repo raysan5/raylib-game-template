@@ -25,7 +25,7 @@ SHELL=cmd
 
 # Define required raylib variables
 PLATFORM               ?= PLATFORM_ANDROID
-RAYLIB_PATH            ?= ../../raylib
+RAYLIB_PATH            ?= C:\GitHub\raylib
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 # Starting in 2019 using ARM64 is mandatory for published apps,
@@ -47,10 +47,12 @@ ifeq ($(ANDROID_ARCH),x86_64)
 endif
 
 # Required path variables
+# NOTE: JAVA_HOME must be set to JDK (using OpenJDK 13)
+JAVA_HOME              ?= C:/open-jdk
 ANDROID_HOME           ?= C:/android-sdk
 ANDROID_NDK            ?= C:/android-ndk
 ANDROID_TOOLCHAIN      ?= $(ANDROID_NDK)/toolchains/llvm/prebuilt/windows-x86_64
-ANDROID_BUILD_TOOLS    ?= $(ANDROID_HOME)/build-tools/34.0.0
+ANDROID_BUILD_TOOLS    ?= $(ANDROID_HOME)/build-tools/29.0.3
 ANDROID_PLATFORM_TOOLS  = $(ANDROID_HOME)/platform-tools
 
 # Android project configuration variables
@@ -59,7 +61,7 @@ PROJECT_LIBRARY_NAME   ?= main
 PROJECT_BUILD_ID       ?= android
 PROJECT_BUILD_PATH     ?= $(PROJECT_BUILD_ID).$(PROJECT_NAME)
 PROJECT_RESOURCES_PATH ?= resources
-PROJECT_SOURCE_FILES   ?= raylib_game.c screen_ending.c screen_logo.c screen_title.c screen_gameplay.c screen_options.c
+PROJECT_SOURCE_FILES   ?= simple_game.c
 
 # Some source files are placed in directories, when compiling to some 
 # output directory other than source, that directory must pre-exist.
@@ -201,7 +203,7 @@ copy_project_resources:
 	copy $(APP_ICON_HDPI) $(PROJECT_BUILD_PATH)\res\drawable-hdpi\icon.png /Y
 	@echo ^<?xml version="1.0" encoding="utf-8"^?^> > $(PROJECT_BUILD_PATH)/res/values/strings.xml
 	@echo ^<resources^>^<string name="app_name"^>$(APP_LABEL_NAME)^</string^>^</resources^> >> $(PROJECT_BUILD_PATH)/res/values/strings.xml
-	if exist $(PROJECT_RESOURCES_PATH) xcopy $(PROJECT_RESOURCES_PATH) $(PROJECT_BUILD_PATH)\assets\$(PROJECT_RESOURCES_PATH) /Y /E /F
+	if exist $(PROJECT_RESOURCES_PATH) C:\Windows\System32\xcopy $(PROJECT_RESOURCES_PATH) $(PROJECT_BUILD_PATH)\assets\$(PROJECT_RESOURCES_PATH) /Y /E /F
 
 # Generate NativeLoader.java to load required shared libraries
 # NOTE: Probably not the bet way to generate this file... but it works.
@@ -244,7 +246,7 @@ generate_android_manifest:
 # Generate storekey for APK signing: $(PROJECT_NAME).keystore
 # NOTE: Configure here your Distinguished Names (-dname) if required!
 generate_apk_keystore: 
-	if not exist $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore keytool -genkeypair -validity 10000 -dname "CN=$(APP_COMPANY_NAME),O=Android,C=ES" -keystore $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore -storepass $(APP_KEYSTORE_PASS) -keypass $(APP_KEYSTORE_PASS) -alias $(PROJECT_NAME)Key -keyalg RSA
+	if not exist $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore $(JAVA_HOME)/bin/keytool -genkeypair -validity 10000 -dname "CN=$(APP_COMPANY_NAME),O=Android,C=ES" -keystore $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore -storepass $(APP_KEYSTORE_PASS) -keypass $(APP_KEYSTORE_PASS) -alias $(PROJECT_NAME)Key -keyalg RSA
 
 # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
 # NOTE: Generates resources file: src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/R.java
@@ -262,12 +264,12 @@ $(PROJECT_BUILD_PATH)/obj/%.o:%.c
     
 # Compile project .java code into .class (Java bytecode) 
 compile_project_class:
-	javac -verbose -source 1.7 -target 1.7 -d $(PROJECT_BUILD_PATH)/obj -bootclasspath ../lib/jrt.jar -classpath $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar;$(PROJECT_BUILD_PATH)/obj -sourcepath $(PROJECT_BUILD_PATH)/src $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/R.java $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/NativeLoader.java
+	$(JAVA_HOME)/bin/javac -verbose -source 1.7 -target 1.7 -d $(PROJECT_BUILD_PATH)/obj -bootclasspath $(JAVA_HOME)/jre/lib/rt.jar -classpath $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar;$(PROJECT_BUILD_PATH)/obj -sourcepath $(PROJECT_BUILD_PATH)/src $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/R.java $(PROJECT_BUILD_PATH)/src/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/NativeLoader.java
 
 # Compile .class files into Dalvik executable bytecode (.dex)
 # NOTE: Since Android 5.0, Dalvik interpreter (JIT) has been replaced by ART (AOT)
 compile_project_class_dex:
-	$(ANDROID_BUILD_TOOLS)/d8 $(PROJECT_BUILD_PATH)/obj/com/$(APP_COMPANY_NAME)/$(APP_PRODUCT_NAME)/*.class --release --output $(PROJECT_BUILD_PATH)/bin --lib $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar
+	$(ANDROID_BUILD_TOOLS)/dx --verbose --dex --output=$(PROJECT_BUILD_PATH)/bin/classes.dex $(PROJECT_BUILD_PATH)/obj
 
 # Create Android APK package: bin/$(PROJECT_NAME).unsigned.apk
 # NOTE: Requires compiled classes.dex and lib$(PROJECT_LIBRARY_NAME).so
@@ -278,7 +280,7 @@ create_project_apk_package:
 
 # Create signed APK package using generated Key: bin/$(PROJECT_NAME).signed.apk 
 sign_project_apk_package:
-	jarsigner -keystore $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore -storepass $(APP_KEYSTORE_PASS) -keypass $(APP_KEYSTORE_PASS) -signedjar $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).signed.apk $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unsigned.apk $(PROJECT_NAME)Key
+	$(JAVA_HOME)/bin/jarsigner -keystore $(PROJECT_BUILD_PATH)/$(PROJECT_NAME).keystore -storepass $(APP_KEYSTORE_PASS) -keypass $(APP_KEYSTORE_PASS) -signedjar $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).signed.apk $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unsigned.apk $(PROJECT_NAME)Key
 
 # Create zip-aligned APK package: $(PROJECT_NAME).apk 
 zipalign_project_apk_package:
