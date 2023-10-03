@@ -129,6 +129,9 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
         ifeq ($(UNAMEOS),Linux)
             PLATFORM_OS = LINUX
         endif
+        ifeq ($(UNAMEOS),Darwin)
+            PLATFORM_OS = OSX
+        endif
         ifndef PLATFORM_SHELL
             PLATFORM_SHELL = sh
         endif
@@ -472,6 +475,14 @@ endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
 	find . -type f -executable -delete
 	rm -fv *.o
+endif
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    ifeq ($(PLATFORM_OS),LINUX)
+		rm -fv *.o $(PROJECT_NAME).data $(PROJECT_NAME).html $(PROJECT_NAME).js $(PROJECT_NAME).wasm
+    endif
+    ifeq ($(PLATFORM_OS),OSX)
+		rm -f *.o $(PROJECT_NAME).data $(PROJECT_NAME).html $(PROJECT_NAME).js $(PROJECT_NAME).wasm
+    endif
 endif
 
 # Set specific target variable
