@@ -30,7 +30,7 @@
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
 static int framesCounter = 0;
-static int finishScreen = 0;
+static bool finishScreen = false;
 
 static int logoPositionX = 0;
 static int logoPositionY = 0;
@@ -53,7 +53,7 @@ static float alpha = 1.0f;         // Useful for fading
 // Logo Screen Initialization logic
 void InitLogoScreen(void)
 {
-    finishScreen = 0;
+    finishScreen = false;
     framesCounter = 0;
     lettersCount = 0;
 
@@ -117,7 +117,7 @@ void UpdateLogoScreen(void)
                 if (alpha <= 0.0f)
                 {
                     alpha = 0.0f;
-                    finishScreen = 1;   // Jump to next screen
+                    finishScreen = true;   // Jump to next screen
                 }
             }
         }

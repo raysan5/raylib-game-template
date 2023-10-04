@@ -24,15 +24,11 @@
 // Shared Variables Definition (global)
 // NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
-typedef struct {
-    void(*Enter)(void*);
-    void(*Exit)();
-    void(*Update)(float);
-    void(*Draw)(float);
-    char* name;
-}GameScreenState;
 
 GameScreen currentScreen = LOGO;
+GameScreenState screen_state_array[] = {
+    {InitLogoScreen, UnloadLogoScreen, UpdateLogoScreen, DrawLogoScreen}, // LOGO
+};
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
@@ -71,7 +67,7 @@ int main(void)
 
     // Setup and init first screen
     currentScreen = LOGO;
-    InitLogoScreen();
+    screen_state_array[currentScreen].Enter();
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
@@ -111,7 +107,7 @@ static void UpdateDrawFrame(void)
     // Update
     //----------------------------------------------------------------------------------
     UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
-
+    screen_state_array[currentScreen].Update();
     
     //----------------------------------------------------------------------------------
 
@@ -120,7 +116,7 @@ static void UpdateDrawFrame(void)
     BeginDrawing();
 
         ClearBackground(RAYWHITE);
-
+        screen_state_array[currentScreen].Draw();
         //DrawFPS(10, 10);
 
     EndDrawing();

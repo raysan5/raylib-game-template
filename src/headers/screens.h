@@ -7,9 +7,17 @@
 //----------------------------------------------------------------------------------
 typedef enum GameScreen { UNKNOWN = -1, LOGO = 0, TITLE, OPTIONS, GAMEPLAY, ENDING } GameScreen;
 
+typedef struct {
+    void(*Enter)();
+    void(*Exit)();
+    void(*Update)();
+    void(*Draw)();
+}GameScreenState;
+
 //----------------------------------------------------------------------------------
 // Global Variables Declaration (shared by several modules)
 //----------------------------------------------------------------------------------
+//extern GameScreenState screen_state_array[];
 extern GameScreen currentScreen;
 extern Font font;
 extern Music music;
@@ -25,10 +33,9 @@ extern "C" {            // Prevents name mangling of functions
 /*
 */
 void InitLogoScreen(void);
+void UnloadLogoScreen(void);
 void UpdateLogoScreen(void);
 void DrawLogoScreen(void);
-void UnloadLogoScreen(void);
-int FinishLogoScreen(void);
 
 
 #ifdef __cplusplus
