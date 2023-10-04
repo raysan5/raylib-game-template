@@ -26,5 +26,8 @@
     <ClInclude Include="..\..\..\src\headers\serializer.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\headers\sprite.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,6 +15,10 @@
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
 
+#define NEZ_SPRITE_IMPLEMENTATION
+#define NEZ_VEC2_F Vector2
+#define NEZ_RECT_F Rectangle
+#include "sprite.h"
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
@@ -25,9 +29,10 @@
 // NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
 
-GameScreen currentScreen = LOGO;
+GameScreen currentScreen = GAMEPLAY;
 GameScreenState screen_state_array[] = {
     {InitLogoScreen, UnloadLogoScreen, UpdateLogoScreen, DrawLogoScreen}, // LOGO
+    {InitGameplayScreen, UnloadGameplayScreen, UpdateGameplayScreen, DrawGameplayScreen}, // GAMEPLAY
 };
 Font font = { 0 };
 Music music = { 0 };
@@ -66,7 +71,7 @@ int main(void)
     PlayMusicStream(music);
 
     // Setup and init first screen
-    currentScreen = LOGO;
+    currentScreen = GAMEPLAY;
     screen_state_array[currentScreen].Enter();
 
 #if defined(PLATFORM_WEB)

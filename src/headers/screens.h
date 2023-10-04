@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
-typedef enum GameScreen { UNKNOWN = -1, LOGO = 0, TITLE, OPTIONS, GAMEPLAY, ENDING } GameScreen;
+typedef enum GameScreen { UNKNOWN = -1, LOGO = 0, GAMEPLAY, TITLE, OPTIONS, ENDING } GameScreen;
 
 typedef struct {
     void(*Enter)();
@@ -37,6 +37,11 @@ void UnloadLogoScreen(void);
 void UpdateLogoScreen(void);
 void DrawLogoScreen(void);
 
+
+void InitGameplayScreen(void);
+void UnloadGameplayScreen(void);
+void UpdateGameplayScreen(void);
+void DrawGameplayScreen(void);
 
 #ifdef __cplusplus
 }

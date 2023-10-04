@@ -365,6 +365,7 @@
     <ClInclude Include="..\..\..\src\headers\buddy_alloc.h" />
     <ClInclude Include="..\..\..\src\headers\screens.h" />
     <ClInclude Include="..\..\..\src\headers\serializer.h" />
+    <ClInclude Include="..\..\..\src\headers\sprite.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
