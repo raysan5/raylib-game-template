@@ -14,6 +14,8 @@
 
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
+#include "serializer.h"
+
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
@@ -151,6 +153,7 @@ static void TransitionToScreen(GameScreen screen)
     transToScreen = screen;
     transAlpha = 0.0f;
 }
+
 
 // Update transition effect (fade-in, fade-out)
 static void UpdateTransition(void)

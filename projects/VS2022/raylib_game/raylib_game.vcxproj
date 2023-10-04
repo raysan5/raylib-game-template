@@ -352,6 +352,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\screens.h" />
+    <ClInclude Include="..\..\..\src\serializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\raylib_game.c" />
