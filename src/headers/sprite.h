@@ -35,21 +35,13 @@ typedef struct NezRect_f {
 #endif // !NEZ_RECT_F
 
 
-
-#ifndef MAX_ANIM_IMG_COUNT
-	#define MAX_ANIM_IMG_COUNT 10 // default animation array length (avoid allocations)
-#endif // !MAX_ANIM_IMG_COUNT
-
+// Struct for each animation. User needs to provide an array of IDs for image rect positions used in an animation.
 typedef struct{
-	float image;        // used as timer (moduled to imageCount) and on drawing floored(cast as int)
-	int imageCount;     // number of images in the animation
+	float time;			// used as timer (moduled to imageCount) and on drawing floored(cast as int)
+	int image_count;     // number of images in the animation
 	int fps;            // time in seconds for each frame
-	int id_list[MAX_ANIM_IMG_COUNT]; // array of sprite IDs
+	int *id_list;		// array of sprite image rect position IDs
 }SpriteAnimation;
-
-#ifndef MAX_ANIM_COUNT
-	#define MAX_ANIM_COUNT 5  // default animation array length (avoid allocations)
-#endif // !MAX_ANIM_COUNT
 
 typedef struct{
 	int x;				// origin x
@@ -61,10 +53,10 @@ typedef struct{
 	float x_scale;		// scale output rectangle width depending on origin x position
 	float y_scale;		// scale output rectangle height depending on origin y position
 	int image_count;	// number of all frames
-	NEZ_VEC2_F image_pos_list[MAX_ANIM_COUNT * MAX_ANIM_IMG_COUNT];	// list of source x&y on the texture
+	NEZ_VEC2_F *image_pos_list;	// list of source x&y on the texture
 	int current_animation;	// ID for current animation
-	int animation_count;// animationList size
-	SpriteAnimation animation_list[MAX_ANIM_COUNT];
+	int animation_count;	// animationList size
+	SpriteAnimation *animation_list; // Array of Sprite animations
 }Sprite;
 
 #ifndef NEZ_SPRITE_API
@@ -79,8 +71,17 @@ typedef struct{
 extern "C" {
 #endif
 
-NEZ_SPRITE_API void
-SpriteInit(Sprite* sprite, int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]);
+// Initialize a sprite
+// User needs to provide arrays for image rect positions and array of SpriteAnimations
+NEZ_SPRITE_API Sprite
+SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]);
+
+// Create sprite animation
+// User needs to provide an array of IDs for image rect positions used in an animation
+NEZ_SPRITE_API SpriteAnimation
+SpriteAnimationCreate(int image_count, int fps, int id_list[]);
+
+// Handles logic of providing rectangle from texture and it's location in game with scaling
 NEZ_SPRITE_API void
 SpritePlay(Sprite* sprite, int anim_id, float delta, NEZ_RECT_F* tex_rect, NEZ_RECT_F* sprite_rect);
 
@@ -95,20 +96,27 @@ SpritePlay(Sprite* sprite, int anim_id, float delta, NEZ_RECT_F* tex_rect, NEZ_R
 #undef NEZ_SPRITE_IMPLEMENTATION
 float SpriteAbs(float x){return x>0.0 ? x : -x;}
 
-void
-SpriteInit(Sprite* sprite, int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]) {
-	sprite->w = _w;
-	sprite->h = _h;
-	sprite->x_offset = x_off;
-	sprite->y_offset = y_off;
-	sprite->image_count = total_img_count;
-	sprite->animation_count = anim_count;
-	for (int i = 0; i < total_img_count; i++) {
-		sprite->image_pos_list[i] = img_pos[i];
-	}
-	for (int i = 0; i < anim_count; i++) {
-		sprite->animation_list[i] = anim[i];
-	}
+Sprite
+SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]) {
+	Sprite sprite = { 0 };
+	sprite.w = _w;
+	sprite.h = _h;
+	sprite.x_offset = x_off;
+	sprite.y_offset = y_off;
+	sprite.image_count = total_img_count;
+	sprite.animation_count = anim_count;
+	sprite.image_pos_list = img_pos;
+	sprite.animation_list = anim;
+	return sprite;
+}
+
+SpriteAnimation
+SpriteAnimationCreate(int image_count, int fps, int id_list[]) {
+	SpriteAnimation anim = { 0 };
+	anim.image_count = image_count;
+	anim.fps = fps;
+	anim.id_list = id_list;
+	return anim;
 }
 
 void
@@ -120,7 +128,17 @@ SpritePlay(Sprite* sprite, int anim_id, float delta, NEZ_RECT_F *tex_rect, NEZ_R
 	float w = sprite->w * SpriteAbs(sprite->x_scale);
 	float h = sprite->h * SpriteAbs(sprite->y_scale);
 
+	// TODO: use image position in texture
+	tex_rect->x = 0.f;
+	tex_rect->y = 0.f;
+	tex_rect->width = sprite->w;
+	tex_rect->height = sprite->h;
 
+	// TODO: use scaling
+	sprite_rect->x = x;
+	sprite_rect->y = y;
+	sprite_rect->width = sprite->w;
+	sprite_rect->height = sprite->h;
 }
 
 #endif // NEZ_SPRITE_IMPLEMENTATION

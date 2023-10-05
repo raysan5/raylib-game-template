@@ -37,6 +37,7 @@ GameScreenState screen_state_array[] = {
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
+Texture2D plumber_texture = {0};
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -66,6 +67,7 @@ int main(void)
     font = LoadFont("resources/mecha.png");
     music = LoadMusicStream("resources/ambient.ogg");
     fxCoin = LoadSound("resources/coin.wav");
+    plumber_texture = LoadTexture("resources/Player-sheet.png");
 
     SetMusicVolume(music, 1.0f);
     PlayMusicStream(music);
