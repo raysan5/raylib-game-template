@@ -37,12 +37,13 @@ typedef struct NezRect_f {
 
 // Struct for each animation. User needs to provide an array of IDs for image rect positions used in an animation.
 typedef struct{
-	float time;			// used as timer (moduled to imageCount) and on drawing floored(cast as int)
 	int image_count;     // number of images in the animation
 	int fps;            // time in seconds for each frame
 	int *id_list;		// array of sprite image rect position IDs
 }SpriteAnimation;
 
+
+// TODO: Include rectangles for image and position
 typedef struct{
 	int x;				// origin x
 	int y;				// origin y
@@ -53,9 +54,12 @@ typedef struct{
 	float x_scale;		// scale output rectangle width depending on origin x position
 	float y_scale;		// scale output rectangle height depending on origin y position
 	int image_count;	// number of all frames
-	NEZ_VEC2_F *image_pos_list;	// list of source x&y on the texture
-	int current_animation;	// ID for current animation
 	int animation_count;	// animationList size
+	int current_animation;	// ID for current animation
+	NEZ_RECT_F img_rect;	// rectangle for image location on texture
+	NEZ_RECT_F spr_rect;	// rectangle for drawing on screen
+	float time;			// used as timer (moduled to imageCount)
+	NEZ_VEC2_F *image_pos_list;	// list of source x&y on the texture
 	SpriteAnimation *animation_list; // Array of Sprite animations
 }Sprite;
 
@@ -81,9 +85,13 @@ SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2
 NEZ_SPRITE_API SpriteAnimation
 SpriteAnimationCreate(int image_count, int fps, int id_list[]);
 
+// Switches animation and resets timer
+NEZ_SPRITE_API void
+SpriteSetAnimation(Sprite* sprite, int anim_ID);
+
 // Handles logic of providing rectangle from texture and it's location in game with scaling
 NEZ_SPRITE_API void
-SpritePlay(Sprite* sprite, int anim_id, float delta, NEZ_RECT_F* tex_rect, NEZ_RECT_F* sprite_rect);
+SpritePlay(Sprite *sprite, float delta);
 
 #ifdef __cplusplus
 }
@@ -95,6 +103,7 @@ SpritePlay(Sprite* sprite, int anim_id, float delta, NEZ_RECT_F* tex_rect, NEZ_R
 #ifdef NEZ_SPRITE_IMPLEMENTATION
 #undef NEZ_SPRITE_IMPLEMENTATION
 float SpriteAbs(float x){return x>0.0 ? x : -x;}
+int SpriteSign(float x) { return x < 0.0 ? -1 : 1; }
 
 Sprite
 SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]) {
@@ -120,26 +129,64 @@ SpriteAnimationCreate(int image_count, int fps, int id_list[]) {
 }
 
 void
-SpritePlay(Sprite* sprite, int anim_id, float delta, NEZ_RECT_F *tex_rect, NEZ_RECT_F *sprite_rect) {
-	NEZ_VEC2_F offset = (NEZ_VEC2_F){ sprite->x_offset * sprite->x_scale, sprite->y_offset * sprite->y_scale };
-
-	float x = sprite->x - offset.x;
-	float y = sprite->y - offset.y;
-	float w = sprite->w * SpriteAbs(sprite->x_scale);
-	float h = sprite->h * SpriteAbs(sprite->y_scale);
-
-	// TODO: use image position in texture
-	tex_rect->x = 0.f;
-	tex_rect->y = 0.f;
-	tex_rect->width = sprite->w;
-	tex_rect->height = sprite->h;
-
-	// TODO: use scaling
-	sprite_rect->x = x;
-	sprite_rect->y = y;
-	sprite_rect->width = sprite->w;
-	sprite_rect->height = sprite->h;
+SpriteSetAnimation(Sprite* sprite, int anim_ID) {
+	sprite->time = 0.f;
+	sprite->current_animation = anim_ID;
 }
+
+void
+SpritePlay(Sprite* sprite, float delta) {
+
+	SpriteAnimation *sprite_anim = &sprite->animation_list[sprite->current_animation];
+	// advance timer
+	sprite->time += delta * sprite_anim->fps;
+	if (sprite->time > sprite_anim->image_count) {
+		sprite->time -= sprite_anim->image_count;
+	}
+
+	//printf("%f \n", sprite->time);
+
+	int image_index = (int)(sprite->time) % sprite_anim->image_count;
+	int img_ID = sprite_anim->id_list[image_index];
+	NEZ_VEC2_F image_pos = sprite->image_pos_list[img_ID];
+	//printf("%d \n", image_index);
+
+	sprite->img_rect.x = image_pos.x;
+	sprite->img_rect.y = image_pos.y;
+	sprite->img_rect.width = sprite->w;
+	sprite->img_rect.height = sprite->h;
+
+	// flip texture rectangle if negative
+	if (sprite->x_scale < 0.0) {
+		sprite->img_rect.width *= -1;
+		//sprite->img_rect->x += sprite->w; // If required to have X offset for negative scale
+	}
+
+	if (sprite->y_scale < 0.0) {
+		sprite->img_rect.height *= -1;
+		//sprite->img_rect->y += sprite->h; // If required to have y offset for negative scale
+	}
+
+
+	float abs_x_scale = SpriteAbs(sprite->x_scale);
+	float abs_y_scale = SpriteAbs(sprite->y_scale);
+
+	float x = sprite->x + sprite->x_offset * abs_x_scale;
+	float y = sprite->y + sprite->y_offset * abs_y_scale;
+
+	if (sprite->y_scale < 0.f) {
+		y += sprite->y_offset * sprite->y_scale;
+	}
+
+	float w = sprite->w * abs_x_scale;
+	float h = sprite->h * abs_y_scale;
+	// TODO: use scaling
+	sprite->spr_rect.x = x;
+	sprite->spr_rect.y = y;
+	sprite->spr_rect.width = w;
+	sprite->spr_rect.height = h;
+}
+
 
 #endif // NEZ_SPRITE_IMPLEMENTATION
 
