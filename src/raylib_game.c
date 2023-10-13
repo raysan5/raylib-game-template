@@ -15,10 +15,10 @@
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
 
-#define NEZ_SPRITE_IMPLEMENTATION
+#define NEZ_SPRITE_RECT_IMPLEMENTATION
 #define NEZ_VEC2_F Vector2
 #define NEZ_RECT_F Rectangle
-#include "sprite.h"
+#include "sprite_rect.h"
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>

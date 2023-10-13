@@ -1,5 +1,5 @@
-#ifndef NEZ_SPRITE_H
-#define NEZ_SPRITE_H
+#ifndef NEZ_SPRITE_RECT_H
+#define NEZ_SPRITE_RECT_H
 
 /*
 #ifndef MEM_ALLOC
@@ -54,13 +54,10 @@ typedef struct{
 	float x_scale;		// scale output rectangle width depending on origin x position
 	float y_scale;		// scale output rectangle height depending on origin y position
 	int image_count;	// number of all frames
-	int animation_count;	// animationList size
-	int current_animation;	// ID for current animation
 	NEZ_RECT_F img_rect;	// rectangle for image location on texture
 	NEZ_RECT_F spr_rect;	// rectangle for drawing on screen
 	float time;			// used as timer (moduled to imageCount)
 	NEZ_VEC2_F *image_pos_list;	// list of source x&y on the texture
-	SpriteAnimation *animation_list; // Array of Sprite animations
 }Sprite;
 
 #ifndef NEZ_SPRITE_API
@@ -78,7 +75,7 @@ extern "C" {
 // Initialize a sprite
 // User needs to provide arrays for image rect positions and array of SpriteAnimations
 NEZ_SPRITE_API Sprite
-SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]);
+SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[]);
 
 // Create sprite animation
 // User needs to provide an array of IDs for image rect positions used in an animation
@@ -87,11 +84,11 @@ SpriteAnimationCreate(int image_count, int fps, int id_list[]);
 
 // Switches animation and resets timer
 NEZ_SPRITE_API void
-SpriteSetAnimation(Sprite* sprite, int anim_ID);
+SpriteResetAnimation(Sprite* sprite);
 
 // Handles logic of providing rectangle from texture and it's location in game with scaling
 NEZ_SPRITE_API void
-SpritePlay(Sprite *sprite, float delta);
+SpritePlay(Sprite *sprite, SpriteAnimation* sprite_anim, float delta, bool loop, bool* is_finished);
 
 #ifdef __cplusplus
 }
@@ -100,22 +97,20 @@ SpritePlay(Sprite *sprite, float delta);
 
 //----------------------------------------------------------------------------
 
-#ifdef NEZ_SPRITE_IMPLEMENTATION
-#undef NEZ_SPRITE_IMPLEMENTATION
+#ifdef NEZ_SPRITE_RECT_IMPLEMENTATION
+#undef NEZ_SPRITE_RECT_IMPLEMENTATION
 float SpriteAbs(float x){return x>0.0 ? x : -x;}
 int SpriteSign(float x) { return x < 0.0 ? -1 : 1; }
 
 Sprite
-SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[], int anim_count, SpriteAnimation anim[]) {
+SpriteCreate(int _w, int _h, int x_off, int y_off, int total_img_count, NEZ_VEC2_F img_pos[]) {
 	Sprite sprite = { 0 };
 	sprite.w = _w;
 	sprite.h = _h;
 	sprite.x_offset = x_off;
 	sprite.y_offset = y_off;
 	sprite.image_count = total_img_count;
-	sprite.animation_count = anim_count;
 	sprite.image_pos_list = img_pos;
-	sprite.animation_list = anim;
 	return sprite;
 }
 
@@ -129,19 +124,24 @@ SpriteAnimationCreate(int image_count, int fps, int id_list[]) {
 }
 
 void
-SpriteSetAnimation(Sprite* sprite, int anim_ID) {
+SpriteResetAnimation(Sprite* sprite) {
 	sprite->time = 0.f;
-	sprite->current_animation = anim_ID;
 }
 
 void
-SpritePlay(Sprite* sprite, float delta) {
+SpritePlay(Sprite* sprite, SpriteAnimation* sprite_anim, float delta, bool loop, bool *is_finished) {
 
-	SpriteAnimation *sprite_anim = &sprite->animation_list[sprite->current_animation];
+	// SpriteAnimation *sprite_anim = &sprite->animation_list[sprite->current_animation];
 	// advance timer
 	sprite->time += delta * sprite_anim->fps;
-	if (sprite->time > sprite_anim->image_count) {
-		sprite->time -= sprite_anim->image_count;
+	if (sprite->time >= sprite_anim->image_count) {
+		*is_finished = true; // mark as finished
+		if (loop) {
+			sprite->time -= sprite_anim->image_count;
+		}
+		else {
+			sprite->time = (float)(sprite_anim->image_count -1);
+		}
 	}
 
 	//printf("%f \n", sprite->time);
