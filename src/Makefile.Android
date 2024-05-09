@@ -25,13 +25,13 @@ SHELL=cmd
 
 # Define required raylib variables
 PLATFORM               ?= PLATFORM_ANDROID
-RAYLIB_PATH            ?= C:\GitHub\raylib
+RAYLIB_PATH            ?= ..\..\raylib
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 # Starting in 2019 using ARM64 is mandatory for published apps,
 # Starting on August 2020, minimum required target API is Android 10 (API level 29)
 ANDROID_ARCH           ?= ARM64
-ANDROID_API_VERSION     = 29
+ANDROID_API_VERSION    ?= 29
 
 ifeq ($(ANDROID_ARCH),ARM)
     ANDROID_ARCH_NAME   = armeabi-v7a
@@ -145,7 +145,8 @@ OBJS = $(patsubst %.c, $(PROJECT_BUILD_PATH)/obj/%.o, $(PROJECT_SOURCE_FILES))
 
 # Android APK building process... some steps required...
 # NOTE: typing 'make' will invoke the default target entry called 'all',
-all: create_temp_project_dirs \
+all: clear \
+     create_temp_project_dirs \
      copy_project_required_libs \
      copy_project_resources \
      generate_loader_script \
@@ -158,6 +159,10 @@ all: create_temp_project_dirs \
      create_project_apk_package \
      zipalign_project_apk_package \
      sign_project_apk_package
+
+# Clear old files and directories that needs to be removed before building
+clear:
+	if exist $(PROJECT_BUILD_PATH)/bin rmdir $(PROJECT_BUILD_PATH)/bin
 
 # Create required temp directories for APK building
 create_temp_project_dirs:
@@ -276,7 +281,7 @@ compile_project_class_dex:
 # NOTE: Requires compiled classes.dex and lib$(PROJECT_LIBRARY_NAME).so
 # NOTE: Use -A resources to define additional directory in which to find raw asset files
 create_project_apk_package:
-	$(ANDROID_BUILD_TOOLS)/aapt package -f -M $(PROJECT_BUILD_PATH)/AndroidManifest.xml -S $(PROJECT_BUILD_PATH)/res -A $(PROJECT_BUILD_PATH)/assets -I $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar -F $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unsigned.apk $(PROJECT_BUILD_PATH)/bin
+	$(ANDROID_BUILD_TOOLS)/aapt package -f -M $(PROJECT_BUILD_PATH)/AndroidManifest.xml -S $(PROJECT_BUILD_PATH)/res -A $(PROJECT_BUILD_PATH)/assets -I $(ANDROID_HOME)/platforms/android-$(ANDROID_API_VERSION)/android.jar -F $(PROJECT_BUILD_PATH)/bin/$(PROJECT_NAME).unaligned.apk $(PROJECT_BUILD_PATH)/bin
 	cd $(PROJECT_BUILD_PATH) && $(ANDROID_BUILD_TOOLS)/aapt add bin/$(PROJECT_NAME).unaligned.apk lib/$(ANDROID_ARCH_NAME)/lib$(PROJECT_LIBRARY_NAME).so $(PROJECT_SHARED_LIBS)
 
 # Create zip-aligned APK package: bin/$(PROJECT_NAME).aligned.apk 
