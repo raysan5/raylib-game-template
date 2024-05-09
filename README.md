@@ -14,6 +14,13 @@ _Copyright (c) 2014-2024 Ramon Santamaria ([@raysan5](https://twitter.com/raysan
 
 -----------------------------------
 ## Getting Started with this template
+
+You can use this templates in some ways. Using Visual Studio, using CMake or make your own build setup. This repository come with Visual Studio and CMake already setuped.
+
+Chose one of the follow setup, that fit in you development enviroment.
+
+### Visual Studio
+
 - After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.  So your file structure should look like this:
     - Some parent directory
         - `raylib`
@@ -23,6 +30,25 @@ _Copyright (c) 2014-2024 Ramon Santamaria ([@raysan5](https://twitter.com/raysan
 - If using Visual Studio, open projects/VS2022/raylib-game-template.sln
 - Select on `raylib_game` in the solution explorer, then in the toolbar at the top, click `Project` > `Set as Startup Project`
 - Now you're all set up!  Click `Local Windows Debugger` with the green play arrow and the project will run.
+
+### CMake
+
+- Extract the zip of this project
+- Type the follow command:
+
+```sh
+cmake -S . -B build
+```
+
+> if you want with debug symbols put the flag `-DCMAKE_BUILD_TYPE=Debug`
+
+- After CMake config you project build:
+
+```sh
+cmake --build build
+```
+
+- Inside the build folder are another folder (named the same as the project name on CMakeLists.txt) with the executable and resources folder.
 
 ## $(Game Title)
 
