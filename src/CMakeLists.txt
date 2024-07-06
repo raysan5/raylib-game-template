@@ -1,4 +1,6 @@
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS *.c)
 
-target_sources(${PROJECT_NAME} PRIVATE ${SOURCE_FILES})
+add_executable(Pong main.c player.c pong.c ball.c collision.c score.c)
 
+target_include_directories(Pong PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/raylib/src)
+
+target_link_libraries(Pong raylib)
