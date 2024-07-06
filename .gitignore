@@ -69,3 +69,6 @@ compile_commands.json
 # Android
 *apk*
 android.*
+
+# Mac
+.DS_Store
