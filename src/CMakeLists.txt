@@ -1,5 +1,5 @@
 
-add_executable(Pong main.c player.c pong.c ball.c collision.c score.c)
+add_executable(Pong main.c player.c pong.c ball.c game.c score.c)
 
 target_include_directories(Pong PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/raylib/src)
 

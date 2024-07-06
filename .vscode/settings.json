@@ -5,6 +5,7 @@
     "*.html": "html",
     "raylib.h": "c",
     "screens.h": "c",
-    "raymath.h": "c"
+    "raymath.h": "c",
+    "pong.h": "c"
   }
 }

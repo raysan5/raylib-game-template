@@ -2,11 +2,13 @@
 #include "raymath.h"
 #include "pong.h"
 
-void initPlayer(Player *p, PlayerE pE)
+void initPlayer(Player *p)
 {
     p->rect.width = 20;
     p->rect.height = 100;
-    switch (pE)
+    p->rect.y = SCREEN_HEIGHT / 2 - p->rect.height / 2;
+
+    switch (p->e)
     {
     case PLAYER_ONE:
         p->rect.x = 20;
@@ -15,7 +17,18 @@ void initPlayer(Player *p, PlayerE pE)
         p->rect.x = SCREEN_WIDTH - 20;
         break;
     }
-    p->rect.y = SCREEN_HEIGHT / 2;
+}
+
+void initPlayerOne(Player *p)
+{
+    p->e = PLAYER_ONE;
+    initPlayer(p);
+}
+
+void initPlayerTwo(Player *p)
+{
+    p->e = PLAYER_TWO;
+    initPlayer(p);
 }
 
 void updatePlayer(Player *p)
