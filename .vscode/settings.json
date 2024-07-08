@@ -6,6 +6,7 @@
     "raylib.h": "c",
     "screens.h": "c",
     "raymath.h": "c",
-    "pong.h": "c"
+    "pong.h": "c",
+    "play_screen.h": "c"
   }
 }

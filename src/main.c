@@ -1,9 +1,8 @@
 #include "raylib.h"
 #include "raymath.h"
-#include "pong.h"
+#include "play_screen/play_screen.h"
 
-Player p1;
-Player p2;
+Player p1, p2;
 Ball b;
 Score s;
 

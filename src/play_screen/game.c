@@ -1,6 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
-#include "pong.h"
+#include "play_screen.h"
 #include "stdio.h"
 
 static int resetTimer = 3;
