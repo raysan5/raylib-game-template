@@ -5,6 +5,14 @@
 extern int SCREEN_WIDTH;
 extern int SCREEN_HEIGHT;
 
+// Play Screen Definitions -----
+
+void initPlayScreen();
+void updatePlayScreen();
+void drawPlayScreen();
+
+// -----------------------------
+
 // Player Definitions ---------
 
 typedef enum PlayerE

@@ -1,5 +1,5 @@
 #include "raylib.h"
 
-void initIntroScreen();
-void updateIntroScreen();
-void drawIntroScreen();
+// void initIntroScreen();
+// void updateIntroScreen();
+// void drawIntroScreen();
