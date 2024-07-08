@@ -24,11 +24,15 @@ int main()
     }
     // ------------------------
 
-    // P2 AI Logic --------------
-    p2.rect.y = b.rect.y - p2.rect.height / 2;
+    // Enemy AI Logic --------------
+    // TODO: the enemy is unbeatable
+    updateEnemy(&p2, &b);
     // -----------------------
 
     // Ball Collision Logic -----
+    // TODO: there is an issue with ball collision logic
+    //  NOTE: sometimes the ball hits the player and it counts it as a score
+    //  NOTE: i think the issue is the velocity of the ball at every frame
     if (CheckPlayerScored(&p1, &b))
     {
       resetRound(&p1, &p2, &b);

@@ -71,5 +71,13 @@ void updateReset();
 void drawResetRoundCounter();
 bool CheckPlayerScored(Player *, Ball *);
 
+// -------------------------
+
+// Enemy Functions ----------
+
+void updateEnemy(Player *, Ball *);
+
+// --------------------------
+
 // ---------------------------
 #endif // PONG_HEADER
