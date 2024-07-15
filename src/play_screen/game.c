@@ -53,8 +53,8 @@ void updateReset()
 
 void drawResetRoundCounter()
 {
-    DrawText(resetTimerString, SCREEN_WIDTH / 2 - resetTimerTextSize.x / 2,
-             SCREEN_HEIGHT / 2 - resetTimerTextSize.y / 2, 40, RAYWHITE);
+    DrawText(resetTimerString, GetScreenWidth() / 2 - resetTimerTextSize.x / 2,
+             GetScreenHeight() / 2 - resetTimerTextSize.y / 2, 40, RAYWHITE);
 }
 
 void bounceBall(Ball *b, Player *p)

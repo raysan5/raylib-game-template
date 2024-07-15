@@ -19,6 +19,6 @@ void updateScoreText(Score *s)
 
 void drawScore(Score *s)
 {
-    DrawText(s->text, SCREEN_WIDTH / 2 - s->textSize.x / 2,
+    DrawText(s->text, GetScreenWidth() / 2 - s->textSize.x / 2,
              20 - s->textSize.y / 2, s->fontSize, RAYWHITE);
 }

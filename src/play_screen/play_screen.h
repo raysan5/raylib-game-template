@@ -2,9 +2,6 @@
 #define PONG_HEADER
 #include "raylib.h"
 
-extern int SCREEN_WIDTH;
-extern int SCREEN_HEIGHT;
-
 // Play Screen Definitions -----
 
 void initPlayScreen();

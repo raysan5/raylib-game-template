@@ -6,7 +6,7 @@ void initPlayer(Player *p)
 {
     p->rect.width = 20;
     p->rect.height = 100;
-    p->rect.y = SCREEN_HEIGHT / 2 - p->rect.height / 2;
+    p->rect.y = GetScreenHeight() / 2 - p->rect.height / 2;
 
     switch (p->e)
     {
@@ -14,7 +14,7 @@ void initPlayer(Player *p)
         p->rect.x = 20;
         break;
     case PLAYER_TWO:
-        p->rect.x = SCREEN_WIDTH - 20;
+        p->rect.x = GetScreenWidth() - 20;
         break;
     }
 }
@@ -46,7 +46,7 @@ void updatePlayer(Player *p)
         p->rect.y = GetMouseY() - p->rect.height / 2;
     }
 
-    p->rect.y = Clamp(p->rect.y, 0, SCREEN_HEIGHT - p->rect.height);
+    p->rect.y = Clamp(p->rect.y, 0, GetScreenHeight() - p->rect.height);
 }
 
 void drawPlayer(Player *p)

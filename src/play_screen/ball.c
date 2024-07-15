@@ -6,8 +6,8 @@ void initBall(Ball *b)
 {
     b->rect.width = 10;
     b->rect.height = 10;
-    b->rect.x = SCREEN_WIDTH / 2;
-    b->rect.y = SCREEN_HEIGHT / 2;
+    b->rect.x = GetScreenWidth() / 2;
+    b->rect.y = GetScreenHeight() / 2;
     b->vel.x = GetRandomValue(-4, 4);
     if (fabs(b->vel.x) < 1.5)
         b->vel.x = 1.5;
@@ -23,9 +23,9 @@ void updateBall(Ball *b)
         b->rect.y = 1;
         b->vel.y = -b->vel.y;
     }
-    else if (b->rect.y >= SCREEN_HEIGHT - b->rect.height)
+    else if (b->rect.y >= GetScreenHeight() - b->rect.height)
     {
-        b->rect.y = SCREEN_HEIGHT - b->rect.height - 1;
+        b->rect.y = GetScreenHeight() - b->rect.height - 1;
         b->vel.y = -b->vel.y;
     }
 
