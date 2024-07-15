@@ -7,6 +7,8 @@
     "screens.h": "c",
     "raymath.h": "c",
     "pong.h": "c",
-    "play_screen.h": "c"
+    "play_screen.h": "c",
+    "stdio.h": "c",
+    "intro_screen.h": "c"
   }
 }

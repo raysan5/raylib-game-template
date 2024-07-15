@@ -1,47 +1,46 @@
 #include "raylib.h"
 #include "raymath.h"
-#include "play_screen/play_screen.h"
+#include "driver.h"
 
-typedef enum SCREEN
-{
-  INTRO_SCREEN,
-  PLAY_SCREEN
-} SCREEN;
+const int SCREEN_WIDTH = 400;
+const int SCREEN_HEIGHT = 400;
 
-SCREEN currentScreen = PLAY_SCREEN;
-
-// TODO: move everything here to init and update PlayScreen
 int main()
 {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pong");
   SetTargetFPS(60);
 
-  initPlayScreen();
+  initScreen();
 
   while (!WindowShouldClose())
   {
-    switch (currentScreen)
-    {
-    case INTRO_SCREEN:
-      break;
-    case PLAY_SCREEN:
-      updatePlayScreen();
-    }
+
+    // Updating Logic ---------
+    updateScreen();
+    // ------------------------
+
+    // Switching Screens Logic
+    // TODO: create a check in every screen to see whether its done or not
+    //  or atleast just the intro screenk
+    /**
+     * we check if the intro screen is done
+     * if the intro screen is done
+     *  we set the next screen
+     *  we begin fading to black
+     *  once we are completely black we switch screens
+     *  we init the next screen
+     *  and we begin unfading
+     *  we set isScreenTransitioning to false
+     * if the screen is not done we continue as normal
+     */
+
+    // ------------------------
 
     // Drawing Logic -----------
     BeginDrawing();
     {
-      ClearBackground(BLACK);
-
-      switch (currentScreen)
-      {
-      case INTRO_SCREEN:
-        break;
-      case PLAY_SCREEN:
-        drawPlayScreen();
-        break;
-      }
-      drawPlayScreen();
+      DrawFPS(0, 0);
+      drawScreen();
     }
     EndDrawing();
     // -------------------------

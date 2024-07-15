@@ -51,6 +51,9 @@ void updatePlayScreen()
 
 void drawPlayScreen()
 {
+
+    ClearBackground(BLACK);
+
     drawPlayer(&p1);
     drawPlayer(&p2);
     drawScore(&s);
