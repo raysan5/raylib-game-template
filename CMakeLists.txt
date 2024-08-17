@@ -39,7 +39,7 @@ add_custom_command(
 target_link_libraries(${PROJECT_NAME} raylib)
 
 # Web Configurations
-if (${PLATFORM} STREQUAL "Web")
+if ("${PLATFORM}" STREQUAL "Web")
     # Tell Emscripten to build an example.html file.
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
     target_link_options(${PROJECT_NAME} PUBLIC "-sUSE_GLFW=3")
