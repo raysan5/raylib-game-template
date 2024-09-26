@@ -33,7 +33,7 @@ PROJECT_NAME          ?= raylib_game
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= .
 
-RAYLIB_PATH           ?= ../../raylib
+RAYLIB_SRC_PATH       ?= ../../raylib/src
 
 # Locations of raylib.h and libraylib.a/libraylib.so
 # NOTE: Those variables are only used for PLATFORM_OS: LINUX, BSD
@@ -138,16 +138,8 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     endif
 endif
 
-# Default path for raylib on Raspberry Pi
-ifeq ($(PLATFORM),PLATFORM_RPI)
-    RAYLIB_PATH        ?= /home/pi/raylib
-endif
-ifeq ($(PLATFORM),PLATFORM_DRM)
-    RAYLIB_PATH        ?= /home/pi/raylib
-endif
-
 # Define raylib release directory for compiled library
-RAYLIB_RELEASE_PATH 	?= $(RAYLIB_PATH)/src
+RAYLIB_RELEASE_PATH 	?= $(RAYLIB_SRC_PATH)
 
 ifeq ($(OS),Windows_NT)
     ifeq ($(PLATFORM),PLATFORM_WEB)
@@ -252,7 +244,7 @@ endif
 # Define include paths for required headers: INCLUDE_PATHS
 # NOTE: Some external/extras libraries could be required (stb, physac, easings...)
 #------------------------------------------------------------------------------------------------
-INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/src/external -I$(RAYLIB_PATH)/src/extras
+INCLUDE_PATHS = -I. -I$(RAYLIB_SRC_PATH) -I$(RAYLIB_PATH)/external
 
 # Define additional directories containing required header files
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
@@ -277,12 +269,12 @@ endif
 
 # Define library paths containing required libs: LDFLAGS
 #------------------------------------------------------------------------------------------------
-LDFLAGS = -L. -L$(RAYLIB_RELEASE_PATH) -L$(RAYLIB_PATH)/src
+LDFLAGS = -L. -L$(RAYLIB_RELEASE_PATH) -L$(RAYLIB_SRC_PATH)
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
         # NOTE: The resource .rc file contains windows executable icon and properties
-        LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
+        LDFLAGS += $(RAYLIB_SRC_PATH)/raylib.rc.data
         # -Wl,--subsystem,windows hides the console window
         ifeq ($(BUILD_MODE), RELEASE)
             LDFLAGS += -Wl,--subsystem,windows
