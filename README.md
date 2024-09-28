@@ -49,6 +49,7 @@ cmake --build build
 ```
 
 - Inside the build folder are another folder (named the same as the project name on CMakeLists.txt) with the executable and resources folder.
+- In order for resources to load properly, cd to `src` and run the executable (`../build/${PROJECT_NAME}/${PROJECT_NAME}`) from there.
 
 ## $(Game Title)
 
