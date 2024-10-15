@@ -86,4 +86,4 @@ resources/characters/enemy_slime.png
 resources/common/font_arial.ttf
 resources/common/gui.png
 ```
-_NOTE: Some resources require to be loaded all at once while others require to be loaded only at initialization (gui, font)._
+_NOTE: Some resources require to be loaded all at once while other require to be loaded only at initialization (gui, font)._

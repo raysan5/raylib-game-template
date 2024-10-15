@@ -57,6 +57,7 @@ dkms.conf
 [R]elease/
 [Rr]elease.DLL/
 *.user
+*.aps
 .vs
 
 # Clangd LSP

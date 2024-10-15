@@ -1,0 +1,132 @@
+name: macOS
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/workflows/macos.yml'
+  release:
+    types: [published]
+    
+permissions:
+  contents: read
+
+jobs:
+  build:
+    permissions:
+      contents: write       # for actions/upload-release-asset to upload release asset
+    runs-on: macos-latest
+    
+    env:
+      PROJECT_NAME: ${{ github.event.repository.name }}
+      PROJECT_BUILD_PATH: ${{ github.event.repository.name }}/src
+      PROJECT_RELEASE_PATH: ${{ github.event.repository.name }}_dev_macos
+      PROJECT_CUSTOM_FLAGS: ""
+      PROJECT_RESOURCES_PATH: resources
+    
+    steps:
+    - name: Checkout this repo
+      uses: actions/checkout@master
+      with:
+        path: ${{ env.PROJECT_NAME }}
+      
+    - name: Checkout raylib repo
+      uses: actions/checkout@v4
+      with:
+        repository: raysan5/raylib
+        path: raylib
+        
+    - name: Setup Release Paths
+      run: |
+        echo "PROJECT_RELEASE_PATH=${{ env.PROJECT_NAME }}_v${{ github.event.release.tag_name }}_macos" >> $GITHUB_ENV
+      shell: bash
+      if: github.event_name == 'release' && github.event.action == 'published'
+      
+    - name: Setup Environment
+      run: | 
+        mkdir ${{ env.PROJECT_RELEASE_PATH }}
+        cd ${{ env.PROJECT_RELEASE_PATH }}
+        mkdir ${{ env.PROJECT_NAME }}.app
+        cd ${{ env.PROJECT_NAME }}.app
+        mkdir Contents
+        cd Contents
+        mkdir MacOS
+        mkdir Resources
+        cd ../../..
+        ls
+      shell: bash
+             
+    # Generating static library, note that i386 architecture is deprecated
+    # Defining GL_SILENCE_DEPRECATION because OpenGL is deprecated on macOS
+    - name: Build raylib Library
+      run: |
+        cd raylib/src
+        clang --version
+        
+        # Extract version numbers from Makefile
+        brew install grep
+        RAYLIB_API_VERSION=`ggrep -Po 'RAYLIB_API_VERSION\s*=\s\K(.*)' Makefile`
+        RAYLIB_VERSION=`ggrep -Po 'RAYLIB_VERSION\s*=\s\K(.*)' Makefile`
+        
+        # Build raylib x86_64 static
+        make PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=STATIC CUSTOM_CFLAGS="-target x86_64-apple-macos10.12 -DGL_SILENCE_DEPRECATION"
+        mv -v -f libraylib.a libraylib_x86_64.a
+        make clean
+        
+        # Build raylib arm64 static
+        make PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=STATIC CUSTOM_CFLAGS="-target arm64-apple-macos11 -DGL_SILENCE_DEPRECATION" -B
+        mv -v -f libraylib.a libraylib_arm64.a
+        make clean
+        
+        # Join x86_64 and arm64 static
+        lipo -create -output libraylib.a libraylib_x86_64.a libraylib_arm64.a
+        lipo libraylib.a -detailed_info
+        cd ../..
+
+    - name: Build Product
+      run: |
+        cd ${{ env.PROJECT_NAME }}/src
+        
+        # Build project x86_64 binary
+        # TODO: Link with x86_64 raylib library: libraylib_x86_64.a
+        make PLATFORM=PLATFORM_DESKTOP BUILD_MODE=RELEASE PROJECT_CUSTOM_FLAGS=${{ env.PROJECT_CUSTOM_FLAGS }} PROJECT_BUILD_PATH=. RAYLIB_SRC_PATH=../../raylib/src PROJECT_CUSTOM_FLAGS="-target x86_64-apple-macos10.12"
+        mv -v -f ${{ env.PROJECT_NAME }} ${{ env.PROJECT_NAME }}_x86_64
+        make clean
+        
+        # Build project arm64 binary
+        # TODO: Link with arm64 raylib library: libraylib_arm.a
+        make PLATFORM=PLATFORM_DESKTOP BUILD_MODE=RELEASE PROJECT_CUSTOM_FLAGS=${{ env.PROJECT_CUSTOM_FLAGS }} PROJECT_BUILD_PATH=. RAYLIB_SRC_PATH=../../raylib/src PROJECT_CUSTOM_FLAGS="-target arm64-apple-macos11"
+        mv -v -f ${{ env.PROJECT_NAME }} ${{ env.PROJECT_NAME }}_arm64
+        make clean
+        
+        # Join x86_64 and arm64 binaries
+        lipo -create -output ${{ env.PROJECT_NAME }} ${{ env.PROJECT_NAME }}_x86_64 ${{ env.PROJECT_NAME }}_arm64
+        lipo ${{ env.PROJECT_NAME }} -detailed_info
+        cd ..
+
+    - name: Generate Artifacts
+      run: |
+        ls ${{ env.PROJECT_BUILD_PATH }}
+        cp ${{ env.PROJECT_BUILD_PATH }}/${{ env.PROJECT_NAME }} ${{ env.PROJECT_RELEASE_PATH }}/${{ env.PROJECT_NAME }}.app/Contents/MacOS
+        cp ${{ env.PROJECT_NAME }}/src/${{ env.PROJECT_NAME }}.icns ${{ env.PROJECT_RELEASE_PATH }}/${{ env.PROJECT_NAME }}.app/Contents/Resources
+        cp ${{ env.PROJECT_NAME }}/src/Info.plist ${{ env.PROJECT_RELEASE_PATH }}/${{ env.PROJECT_NAME }}.app/Contents
+        cp -r ${{ env.PROJECT_NAME }}/${{ env.PROJECT_RESOURCES_PATH }} ${{ env.PROJECT_RELEASE_PATH }}/${{ env.PROJECT_NAME }}.app/Contents
+        cp ${{ env.PROJECT_NAME }}/README.md ${{ env.PROJECT_RELEASE_PATH }}
+        cp ${{ env.PROJECT_NAME }}/LICENSE ${{ env.PROJECT_RELEASE_PATH }}
+        ls ${{ env.PROJECT_RELEASE_PATH }}
+        7z a ./${{ env.PROJECT_RELEASE_PATH }}.zip ./${{ env.PROJECT_RELEASE_PATH }}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PROJECT_RELEASE_PATH }}.zip
+        path: ./${{ env.PROJECT_RELEASE_PATH }}.zip
+
+    - name: Upload Artifact to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ env.PROJECT_RELEASE_PATH }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      if: github.event_name == 'release' && github.event.action == 'published'

@@ -65,7 +65,7 @@ int main(void)
 
     // Load global data (assets that must be available in all screens, i.e. font)
     font = LoadFont("resources/mecha.png");
-    music = LoadMusicStream("resources/ambient.ogg");
+    //music = LoadMusicStream("resources/ambient.ogg"); // TODO: Load music
     fxCoin = LoadSound("resources/coin.wav");
 
     SetMusicVolume(music, 1.0f);
@@ -118,7 +118,7 @@ int main(void)
 // Module specific Functions Definition
 //----------------------------------------------------------------------------------
 // Change to next screen, no transition
-static void ChangeToScreen(GameScreen screen)
+static void ChangeToScreen(int screen)
 {
     // Unload current screen
     switch (currentScreen)
@@ -146,7 +146,7 @@ static void ChangeToScreen(GameScreen screen)
 }
 
 // Request transition to next screen
-static void TransitionToScreen(GameScreen screen)
+static void TransitionToScreen(int screen)
 {
     onTransition = true;
     transFadeOut = false;
@@ -222,7 +222,7 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
+    //UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
 
     if (!onTransition)
     {
