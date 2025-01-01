@@ -23,7 +23,7 @@ jobs:
       PROJECT_BUILD_PATH: ${{ github.event.repository.name }}/src
       PROJECT_RELEASE_PATH: ${{ github.event.repository.name }}_dev_linux_x64
       PROJECT_CUSTOM_FLAGS: ""
-      PROJECT_RESOURCES_PATH: resources
+      PROJECT_RESOURCES_PATH: src/resources
     
     steps:
     - name: Checkout this repo
