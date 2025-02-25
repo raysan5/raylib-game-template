@@ -15,6 +15,10 @@ _Copyright (c) 2014-2025 Ramon Santamaria ([@raysan5](https://twitter.com/raysan
 -----------------------------------
 ## Getting Started with this template
 
+#### Linux
+When setting up this template on linux for the first time, install the dependencies from this page:
+([Working on GNU Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux))
+
 You can use this templates in some ways. Using Visual Studio, using CMake or make your own build setup. This repository come with Visual Studio and CMake already setuped.
 
 Chose one of the follow setup, that fit in you development enviroment.
