@@ -19,13 +19,13 @@ _Copyright (c) 2014-2025 Ramon Santamaria ([@raysan5](https://twitter.com/raysan
 When setting up this template on linux for the first time, install the dependencies from this page:
 ([Working on GNU Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux))
 
-You can use this templates in some ways. Using Visual Studio, using CMake or make your own build setup. This repository come with Visual Studio and CMake already setuped.
+You can use this templates in a few ways: using Visual Studio, using CMake, or make your own build setup. This repository comes with Visual Studio and CMake already set up.
 
-Chose one of the follow setup, that fit in you development enviroment.
+Chose one of the follow setup options that fit in you development environment.
 
 ### Visual Studio
 
-- After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.  So your file structure should look like this:
+- After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.  So, your file structure should look like this:
     - Some parent directory
         - `raylib`
             - the contents of https://github.com/raysan5/raylib
@@ -44,15 +44,15 @@ Chose one of the follow setup, that fit in you development enviroment.
 cmake -S . -B build
 ```
 
-> if you want with debug symbols put the flag `-DCMAKE_BUILD_TYPE=Debug`
+> if you want to configure your project to build with debug symbols, use the flag `-DCMAKE_BUILD_TYPE=Debug`
 
-- After CMake config your project build:
+- After CMake configures your project, build with:
 
 ```sh
 cmake --build build
 ```
 
-- Inside the build folder are another folder (named the same as the project name on CMakeLists.txt) with the executable and resources folder.
+- Inside the build folder is another folder (named the same as the project name on CMakeLists.txt) with the executable and resources folder.
 - In order for resources to load properly, cd to `src` and run the executable (`../build/${PROJECT_NAME}/${PROJECT_NAME}`) from there.
 
 - cmake will automatically download a current release of raylib but if you want to use your local version you can pass `-DFETCHCONTENT_SOURCE_DIR_RAYLIB=<dir_with_raylib>` 
