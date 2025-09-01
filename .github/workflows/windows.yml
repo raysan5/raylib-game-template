@@ -8,7 +8,7 @@ on:
       - '.github/workflows/windows.yml'
   release:
     types: [published]
-    
+
 permissions:
   contents: read
 
@@ -29,13 +29,13 @@ jobs:
       uses: actions/checkout@master
       with:
         path: ${{ env.PROJECT_NAME }}
-      
+
     - name: Checkout raylib repo
       uses: actions/checkout@v4
       with:
         repository: raysan5/raylib
         path: raylib
-        
+
     # NOTE: Visual Studio project build configuration already defines all required directories where project is generated:
     # $(SolutionDir)\build\$(ProjectName)\bin\$(Platform)\$(Configuration)\
     - name: Setup Release Paths
@@ -45,7 +45,7 @@ jobs:
       if: github.event_name == 'release' && github.event.action == 'published'
 
     - name: Setup Environment
-      run: | 
+      run: |
         mkdir ${{ env.PROJECT_RELEASE_PATH }}
         dir
       shell: cmd
