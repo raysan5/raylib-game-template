@@ -29,7 +29,7 @@ Music music = { 0 };
 Sound fxCoin = { 0 };
 
 //----------------------------------------------------------------------------------
-// Local Variables Definition (local to this module)
+// Global Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
 static const int screenWidth = 800;
 static const int screenHeight = 450;
@@ -42,7 +42,7 @@ static int transFromScreen = -1;
 static GameScreen transToScreen = UNKNOWN;
 
 //----------------------------------------------------------------------------------
-// Local Functions Declaration
+// Module Functions Declaration
 //----------------------------------------------------------------------------------
 static void ChangeToScreen(int screen);     // Change to screen, no transition effect
 
@@ -53,7 +53,7 @@ static void DrawTransition(void);           // Draw transition effect (full-scre
 static void UpdateDrawFrame(void);          // Update and draw one frame
 
 //----------------------------------------------------------------------------------
-// Main entry point
+// Program main entry point
 //----------------------------------------------------------------------------------
 int main(void)
 {
@@ -115,7 +115,7 @@ int main(void)
 }
 
 //----------------------------------------------------------------------------------
-// Module specific Functions Definition
+// Module Functions Definition
 //----------------------------------------------------------------------------------
 // Change to next screen, no transition
 static void ChangeToScreen(int screen)
