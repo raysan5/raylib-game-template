@@ -44,12 +44,8 @@ PROJECT_SOURCE_FILES  ?= \
 RAYLIB_PATH           ?= C:\raylib\raylib
 RAYLIB_INCLUDE_PATH   ?= $(RAYLIB_PATH)/src
 RAYLIB_LIB_PATH       ?= $(RAYLIB_PATH)/src
-
 # Library type used for raylib: STATIC (.a) or SHARED (.so/.dll)
 RAYLIB_LIBTYPE        ?= STATIC
-
-# Define compiler path on Windows
-COMPILER_PATH         ?= C:\raylib\w64devkit\bin
 
 # Build mode for project: DEBUG or RELEASE
 BUILD_MODE            ?= RELEASE
@@ -69,7 +65,6 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     # ifeq ($(UNAME),Msys) -> Windows
     ifeq ($(OS),Windows_NT)
         PLATFORM_OS = WINDOWS
-        export PATH := $(COMPILER_PATH);$(PATH)
     else
         UNAMEOS = $(shell uname)
         ifeq ($(UNAMEOS),Linux)
@@ -161,7 +156,7 @@ endif
 #  -Wno-missing-braces  ignore invalid warning (GCC bug 53119)
 #  -Wno-unused-value    ignore unused return values of some functions (i.e. fread())
 #  -D_DEFAULT_SOURCE    use with -std=c99 on Linux and PLATFORM_WEB, required for timespec
-CFLAGS = -Wall -D_DEFAULT_SOURCE -Wno-missing-braces -Wno-unused-value -Wno-pointer-sign $(PROJECT_CUSTOM_FLAGS)
+CFLAGS = -Wall -D_DEFAULT_SOURCE -Wno-missing-braces -Wno-unused-value -Wno-unused-result -Wno-pointer-sign $(PROJECT_CUSTOM_FLAGS)
 #CFLAGS += -Wextra -Wmissing-prototypes -Wstrict-prototypes
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
@@ -363,10 +358,6 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),OSX)
 	rm -f *.o external/*.o $(PROJECT_NAME)
     endif
-endif
-ifeq ($(PLATFORM),PLATFORM_RPI)
-	find . -type f -executable -delete
-	rm -fv *.o
 endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
 	find . -type f -executable -delete
