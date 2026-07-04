@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
     permissions:
-      contents: write       # for actions/upload-release-asset to upload release asset
+      contents: write       # Required for actions/upload-release-asset to upload release asset
     runs-on: windows-latest
 
     # WARNING: Project (internal) name could not be the same as repository name
@@ -34,7 +34,7 @@ jobs:
         path: ${{ env.PROJECT_REPO_NAME }}
       
     - name: Checkout raylib repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@master
       with:
         repository: raysan5/raylib
         path: raylib
@@ -55,7 +55,7 @@ jobs:
 
     # Setup MSBuild.exe path if required
     - name: Setup MSBuild path
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Build raylib Library + Product (VS2022 solution)
       run: |
@@ -77,7 +77,7 @@ jobs:
       shell: cmd
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.PROJECT_RELEASE_PATH }}.zip
         path: |
@@ -85,7 +85,7 @@ jobs:
             !./${{ env.PROJECT_RELEASE_PATH }}.zip
 
     - name: Upload Artifact to Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v3
       with:
         files: ${{ env.PROJECT_RELEASE_PATH }}.zip
       env:
